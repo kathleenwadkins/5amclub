@@ -446,6 +446,16 @@
   .fitem .fnm { flex:1; }
   .fitem .fmac { color:var(--muted); font-size:0.78rem; white-space:nowrap; }
   .fitem .fx { border:none; background:none; color:#b9534a; font-size:1.1rem; cursor:pointer; padding:0 2px; }
+  /* how-many chip on a logged item */
+  .fitem .fq { flex:none; font-family:inherit; font-size:0.68rem; font-weight:700;
+    color:var(--accent); background:var(--accent-soft); border:1px solid transparent;
+    border-radius:999px; padding:3px 8px; cursor:pointer; }
+  .fitem .fq:active { transform:scale(.92); border-color:var(--accent); }
+  /* amount row in the add form */
+  .qrow { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .qlbl { font-size:0.72rem; color:var(--muted); flex:none; }
+  .flog input.qin { width:62px; flex:none; text-align:center; font-weight:700; }
+  .qmem { font-size:0.68rem; color:#0f7a52; line-height:1.25; }
 
   /* ---------- weigh-in ---------- */
   .weighrow { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
@@ -2209,9 +2219,68 @@ function estimateLocal(text){
 }
 /* your own most-logged items, newest macros wins — powers the quick-add chips */
 /* add an already-costed item straight to today's log — no estimating step */
-function addLoggedFood(item){
+/* ---------- remembered nutrition, per single serving ----------
+   A log entry carries q (how many), cu/pu (per-one calories/protein) and
+   c/p (the totals actually eaten). Older entries have only c/p, so unitMacros
+   treats those as one serving — nothing needs migrating. */
+function unitMacros(e){
+  const q = (+e.q > 0) ? +e.q : 1;
+  const cu = (e.cu !== undefined && e.cu !== null) ? +e.cu : (+e.c || 0) / q;
+  const pu = (e.pu !== undefined && e.pu !== null) ? +e.pu : (+e.p || 0) / q;
+  return { q:q, cu:cu, pu:pu };
+}
+function memKey(n){ return String(n || '').trim().toLowerCase().replace(/\s+/g,' '); }
+let foodMem = {};
+try { foodMem = JSON.parse(localStorage.getItem('mwl-foodmem') || '{}'); } catch(e){ foodMem = {}; }
+function saveFoodMem(){ localStorage.setItem('mwl-foodmem', JSON.stringify(foodMem)); }
+function rememberFood(n, cu, pu){
+  const k = memKey(n); if (!k) return;
+  foodMem[k] = { n:String(n).trim(), c:Math.round(cu), p:Math.round(pu) };
+  saveFoodMem();
+}
+function recallFood(n){ return foodMem[memKey(n)] || null; }
+
+/* Seed the memory from everything already logged, so foods you've eaten before
+   are recognised straight away rather than after logging them once more. */
+if (!localStorage.getItem('mwl-foodmem-seed-v1')){
+  Object.keys(food).sort().forEach(d=>{
+    (food[d] || []).forEach(e=>{
+      if (!e.n || e.st === 'pending' || e.c === null || e.c === undefined) return;
+      const u = unitMacros(e);
+      foodMem[memKey(e.n)] = { n:String(e.n).trim(), c:Math.round(u.cu), p:Math.round(u.pu) };
+    });
+  });
+  saveFoodMem();
+  localStorage.setItem('mwl-foodmem-seed-v1','1');
+}
+
+/* accepts 2, 2.5, .5, 1/2, 1 1/2 — returns null if it isn't a usable amount */
+function parseQty(s){
+  if (s === null || s === undefined) return null;
+  s = String(s).trim();
+  if (!s) return 1;
+  let m = s.match(/^(\d+)\s+(\d+)\s*\/\s*(\d+)$/);
+  if (m){ const d = +m[3]; if (!d) return null; return +m[1] + (+m[2]) / d; }
+  m = s.match(/^(\d*\.?\d*)\s*\/\s*(\d*\.?\d+)$/);
+  if (m && m[1] !== ''){ const d = parseFloat(m[2]); if (!d) return null; return parseFloat(m[1]) / d; }
+  const v = parseFloat(s);
+  if (isNaN(v) || v <= 0) return null;
+  return v;
+}
+function fmtQty(q){
+  const r = Math.round(q * 100) / 100;
+  if (Math.abs(r - 0.5) < 1e-9) return '½';
+  if (Math.abs(r - 0.25) < 1e-9) return '¼';
+  if (Math.abs(r - 0.75) < 1e-9) return '¾';
+  if (Math.abs(r - 1.5) < 1e-9) return '1½';
+  return String(r);
+}
+
+function addLoggedFood(item, qty){
+  const q = (qty && qty > 0) ? qty : 1;
   const list = foodLog(foodDay).slice();
-  list.push({ n:item.n, c:item.c, p:item.p, st:'done', src:'quick' });
+  list.push({ n:item.n, q:q, cu:item.c, pu:item.p,
+    c:Math.round(item.c * q), p:Math.round(item.p * q), st:'done', src:'quick' });
   food[foodDay] = list; saveFood(); render();
 }
 function frequentFoods(n){
@@ -2219,12 +2288,16 @@ function frequentFoods(n){
   Object.keys(food).forEach(d=>{
     (food[d]||[]).forEach(e=>{
       if (!e.n || e.st === 'pending' || e.c === null) return;
-      const key = e.n.trim().toLowerCase();
-      if (!seen[key]) seen[key] = { n:e.n.trim(), c:e.c, p:e.p, count:0, last:'' };
+      const key = memKey(e.n);
+      const u = unitMacros(e);
+      if (!seen[key]) seen[key] = { n:e.n.trim(), c:Math.round(u.cu), p:Math.round(u.pu), count:0, last:'' };
       seen[key].count++;
-      if (d >= seen[key].last){ seen[key].last = d; seen[key].c = e.c; seen[key].p = e.p; }
+      if (d >= seen[key].last){ seen[key].last = d;
+        seen[key].c = Math.round(u.cu); seen[key].p = Math.round(u.pu); }
     });
   });
+  /* a value you confirmed by hand beats one derived from an old entry */
+  Object.keys(seen).forEach(k=>{ const m = foodMem[k]; if (m){ seen[k].c = m.c; seen[k].p = m.p; } });
   return Object.keys(seen).map(k=>seen[k])
     .filter(x=>x.count >= 2)
     .sort((a,b)=> b.count - a.count || (b.last < a.last ? -1 : 1))
@@ -2532,24 +2605,57 @@ function renderFood(){
   const logCard = document.createElement('section'); logCard.className='pcard flog';
   logCard.innerHTML = '<h3>Food log</h3>';
   const nIn = document.createElement('input'); nIn.type='text'; nIn.className='fn';
-  nIn.placeholder='What did you eat? e.g. 2 eggs + a Premier Protein';
+  nIn.placeholder='What did you eat? e.g. Oikos shake';
   nIn.style.width='100%'; nIn.style.marginBottom='8px';
   logCard.appendChild(nIn);
+
+  const qRow = document.createElement('div'); qRow.className='qrow';
+  const qLbl = document.createElement('span'); qLbl.className='qlbl'; qLbl.textContent='How many';
+  const qIn = document.createElement('input'); qIn.type='text'; qIn.className='qin';
+  qIn.placeholder='1'; qIn.setAttribute('inputmode','decimal');
+  qIn.title = 'Whole or partial — 2, 0.5 and 1/2 all work';
+  const memHint = document.createElement('span'); memHint.className='qmem';
+  function refreshHint(){
+    const m = recallFood(nIn.value);
+    memHint.textContent = m ? 'remembered: ' + m.c + ' cal · ' + m.p + 'g each' : '';
+  }
+  nIn.oninput = refreshHint; refreshHint();
+  qRow.appendChild(qLbl); qRow.appendChild(qIn); qRow.appendChild(memHint);
+  logCard.appendChild(qRow);
+
   const addBtn = document.createElement('button'); addBtn.className='fadd'; addBtn.textContent='Log it';
   function addFood(){
     const nm = nIn.value.trim(); if (!nm) return;
+    const q = parseQty(qIn.value);
+    if (q === null){ alert('How many? Try a number like 2, 0.5 or 1/2.'); return; }
     const list = foodLog(foodDay).slice();
-    list.push({ n:nm, c:null, p:null, st:'pending' });
-    food[foodDay] = list; saveFood(); nIn.value=''; burstAt(addBtn,false); render();
+    const mem = recallFood(nm);
+    if (mem){
+      /* already known — no estimating step, and the amount scales it */
+      list.push({ n:nm, q:q, cu:mem.c, pu:mem.p,
+        c:Math.round(mem.c * q), p:Math.round(mem.p * q), st:'done', src:'memory' });
+      food[foodDay] = list; saveFood();
+      nIn.value=''; qIn.value=''; burstAt(addBtn,false); render();
+      return;
+    }
+    list.push({ n:nm, q:q, c:null, p:null, st:'pending' });
+    food[foodDay] = list; saveFood();
+    nIn.value=''; qIn.value=''; burstAt(addBtn,false); render();
     estimateEntry(nm).then(r=>{
       const cur = foodLog(foodDay).slice();
       const idx = cur.findIndex(x=>x.n===nm && x.st==='pending');
-      if (idx>=0){ cur[idx] = { n:nm, c:r.c, p:r.p, st:'done', src:r.src };
-        food[foodDay]=cur; saveFood(); if (view==='food') render(); }
+      if (idx>=0){
+        cur[idx] = { n:nm, q:q, cu:r.c, pu:r.p,
+          c:Math.round(r.c * q), p:Math.round(r.p * q), st:'done', src:r.src };
+        food[foodDay]=cur; saveFood();
+        rememberFood(nm, r.c, r.p);
+        if (view==='food') render();
+      }
     });
   }
   addBtn.onclick = addFood;
   nIn.onkeydown = (e)=>{ if (e.key==='Enter') addFood(); };
+  qIn.onkeydown = (e)=>{ if (e.key==='Enter') addFood(); };
   logCard.appendChild(addBtn);
 
   const yKey = shiftYmd(foodDay, -1);
@@ -2561,36 +2667,68 @@ function renderFood(){
     cy.textContent = 'Copy the previous day (' + yLog.length + ' items · ' + yCal + ' cal)';
     cy.onclick = ()=>{
       const list = foodLog(foodDay).slice();
-      yLog.forEach(e=> list.push({ n:e.n, c:e.c, p:e.p, st:'done', src:'copy' }));
+      yLog.forEach(e=>{ const u = unitMacros(e);
+        list.push({ n:e.n, q:u.q, cu:u.cu, pu:u.pu, c:e.c, p:e.p, st:'done', src:'copy' }); });
       food[foodDay] = list; saveFood(); burstAt(cy,false); render();
     };
     logCard.appendChild(cy);
   }
 
   log.forEach((e,i)=>{
+    const u = unitMacros(e);
     const it = document.createElement('div'); it.className='fitem';
     const nm = document.createElement('span'); nm.className='fnm'; nm.textContent = e.n;
+    it.appendChild(nm);
+
+    if (e.st !== 'pending'){
+      const qb = document.createElement('button'); qb.className='fq';
+      qb.textContent = fmtQty(u.q) + '×';
+      qb.title = 'Change how many — this rescales the numbers';
+      qb.onclick = ()=>{
+        const v = prompt('How many "'+e.n+'"?\n\n2, 0.5 and 1/2 all work.', fmtQty(u.q));
+        if (v === null) return;
+        const nq = parseQty(v);
+        if (nq === null){ alert('Try a number like 2, 0.5 or 1/2.'); return; }
+        const cur = foodLog(foodDay).slice();
+        cur[i] = { n:e.n, q:nq, cu:u.cu, pu:u.pu,
+          c:Math.round(u.cu * nq), p:Math.round(u.pu * nq), st:'done', src:e.src || 'qty' };
+        food[foodDay] = cur; saveFood(); render();
+      };
+      it.appendChild(qb);
+    }
+
     const mac = document.createElement('span'); mac.className='fmac';
     if (e.st==='pending'){ mac.textContent = 'estimating…'; }
     else {
       mac.textContent = '≈ '+(e.c||0)+' cal · '+(e.p||0)+'g';
-      mac.style.cursor='pointer'; mac.title='Tap to adjust';
+      mac.style.cursor='pointer';
+      mac.title = 'Tap to correct — it will be remembered for next time';
       mac.onclick = ()=>{
-        const cc = prompt('Calories for "'+e.n+'"', e.c||0); if (cc===null) return;
-        const pp = prompt('Protein grams for "'+e.n+'"', e.p||0); if (pp===null) return;
+        const many = fmtQty(u.q);
+        const one = Math.abs(u.q - 1) < 1e-9;
+        const cc = prompt('Calories for '+(one?'':many+' × ')+'"'+e.n+'"', e.c||0);
+        if (cc===null) return;
+        const pp = prompt('Protein grams for '+(one?'':many+' × ')+'"'+e.n+'"', e.p||0);
+        if (pp===null) return;
+        const ctot = Math.round(+cc||0), ptot = Math.round(+pp||0);
+        const cu = ctot / u.q, pu = ptot / u.q;
         const cur = foodLog(foodDay).slice();
-        cur[i] = { n:e.n, c:Math.round(+cc||0), p:Math.round(+pp||0), st:'done', src:'edit' };
-        food[foodDay]=cur; saveFood(); render();
+        cur[i] = { n:e.n, q:u.q, cu:cu, pu:pu, c:ctot, p:ptot, st:'done', src:'edit' };
+        food[foodDay]=cur; saveFood();
+        rememberFood(e.n, cu, pu);   /* correcting it once teaches it for good */
+        render();
       };
     }
+    it.appendChild(mac);
+
     const x = document.createElement('button'); x.className='fx'; x.innerHTML='&times;';
     x.onclick = ()=>{ const list=foodLog(foodDay).slice(); list.splice(i,1); food[foodDay]=list; saveFood(); render(); };
-    it.appendChild(nm); it.appendChild(mac); it.appendChild(x);
+    it.appendChild(x);
     logCard.appendChild(it);
   });
   if (!log.length){
     const em = document.createElement('div'); em.className='exnote';
-    em.textContent = 'Write what you ate in plain words — the numbers are estimated for you. Tap any estimate to fine-tune it.';
+    em.textContent = 'Write what you ate in plain words. Anything you’ve logged before is remembered, so it fills in instantly — and the amount box handles half or double portions. Tap any estimate to correct it once and it sticks.';
     logCard.appendChild(em);
   }
   wrap.appendChild(logCard);
