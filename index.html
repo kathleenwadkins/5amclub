@@ -147,15 +147,24 @@
   .sched h2 { font-size:0.68rem; text-transform:uppercase; letter-spacing:0.09em;
     color:var(--muted); padding:12px 0 6px; display:flex; justify-content:space-between; }
   .sched h2 .hint { font-weight:500; text-transform:none; letter-spacing:0; }
-  .srow { display:flex; align-items:center; gap:7px; padding:10px 0;
+  .srow { display:flex; flex-direction:column; gap:7px; padding:10px 0;
     border-top:1px solid var(--line); font-size:0.85rem; }
   .srow:first-of-type { border-top:none; }
+  .stop { display:flex; align-items:center; gap:8px; }
   .srow .lbl { flex:1; line-height:1.3; user-select:none; -webkit-user-select:none; }
+  .sctl { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
   .srow select, .srow input[type=date] { font-family:inherit; font-size:0.76rem;
     border:1px solid var(--line); border-radius:8px; padding:5px 6px; background:#fff;
     color:var(--ink); }
   .srow .del { border:none; background:none; color:#b9534a; font-size:1.15rem;
-    cursor:pointer; padding:0 4px; line-height:1; }
+    cursor:pointer; padding:0 4px; line-height:1; flex:none; }
+  /* zone pill — doubles as the picker for moving a task to another zone */
+  .srow select.zsel { font-family:inherit; font-size:0.7rem; font-weight:700;
+    color:var(--accent); background:var(--accent-soft);
+    border:1px solid transparent; border-radius:999px; padding:3px 4px 3px 9px;
+    cursor:pointer; flex:none; width:auto; max-width:120px; }
+  .srow select.zsel:focus { outline:none; border-color:var(--accent); }
+  .srow select.cadsel { font-weight:700; color:var(--accent); }
   .empty { color:var(--muted); font-size:0.8rem; padding:8px 0 12px; }
 
   .nncard { background:var(--card); border:1.5px solid #d8c3ea; border-radius:16px;
@@ -178,6 +187,11 @@
   .bump.back { color:var(--accent); }
   .bump.back:active { transform:translateX(-3px); }
   .b-extra h2 .nm { background-image:linear-gradient(90deg,#e0457b,#a544b0); }
+  .exbtn { border:none; background:none; cursor:pointer; padding:8px 3px;
+    font-size:0.88rem; line-height:1; color:#b6acc2; flex:none; transition:all .15s; }
+  .exbtn:active { transform:scale(.86); color:var(--accent); }
+  .exbtn.del { color:#c98b84; font-size:1.05rem; }
+  .exbtn.del:active { color:#b9534a; }
   .exadd { display:flex; gap:6px; padding:10px 0 6px; border-top:1px solid var(--line); }
   .exadd input { flex:1; font-family:inherit; font-size:0.85rem; color:var(--ink);
     background:#fff; border:1px solid var(--line); border-radius:9px; padding:9px 11px; }
@@ -486,18 +500,20 @@
   .wlrow .wlx { border:none; background:none; color:#b9534a; font-size:1.05rem;
     cursor:pointer; padding:0 2px; flex:none; }
 
-  /* ---------- food quick-add ---------- */
-  .qahead { font-size:0.66rem; text-transform:uppercase; letter-spacing:0.07em;
-    color:var(--muted); font-weight:700; margin:12px 0 7px; }
-  .qachips { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
-  .qachip { display:flex; flex-direction:column; align-items:flex-start; gap:1px;
-    border:1px solid var(--line); background:#fff; border-radius:11px;
-    padding:6px 11px; cursor:pointer; font-family:inherit; text-align:left;
-    transition:all .16s; }
-  .qachip span { font-size:0.78rem; font-weight:600; color:var(--ink); }
-  .qachip i { font-size:0.63rem; color:var(--muted); font-style:normal; }
-  .qachip:active { transform:scale(.96); background:var(--accent-soft);
-    border-color:var(--accent); }
+  /* ---------- your go-tos ---------- */
+  .gtlist { max-height:264px; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    margin:2px -4px 2px; padding:0 4px; }
+  .gtrow { display:flex; align-items:center; gap:9px; width:100%; text-align:left;
+    background:none; border:none; border-top:1px solid var(--line);
+    padding:10px 2px; font-family:inherit; cursor:pointer; }
+  .gtrow:first-child { border-top:none; }
+  .gtrow .gtn { flex:1; font-size:0.85rem; color:var(--ink); line-height:1.3; }
+  .gtrow .gtc { flex:none; font-size:0.6rem; font-weight:700; color:var(--accent);
+    background:var(--accent-soft); border-radius:999px; padding:2px 7px; }
+  .gtrow .gtm { flex:none; font-size:0.72rem; color:var(--muted); white-space:nowrap; }
+  .gtrow .gtx { flex:none; font-size:1.05rem; font-weight:800; color:var(--accent);
+    width:20px; text-align:center; }
+  .gtrow:active { background:var(--accent-soft); }
 
   .done-msg { text-align:center; font-size:0.9rem; color:var(--accent); font-weight:800;
     padding:16px; background:var(--accent-soft); border-radius:16px;
@@ -630,6 +646,10 @@ const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const DAY_FULL = {Mon:'Monday',Tue:'Tuesday',Wed:'Wednesday',Thu:'Thursday',Fri:'Friday',Sat:'Saturday',Sun:'Sunday'};
 const QMONTHS = [0,3,6,9];
 const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const BUCKETS = ['Home','Kitchen','Living Area','Bedrooms','Bathrooms','Entrance',
+  'Grocery','Misc','Morning','Work Day','Evening'];
+const CADENCES = [['daily','Every day'],['weekly','Weekly'],['monthly','Monthly'],
+  ['quarterly','Quarterly'],['annual','Annual'],['once','One-time']];
 
 /* ================= confetti ================= */
 const cvs = document.getElementById('confetti');
@@ -917,6 +937,27 @@ function autoWeek(cad){
   for (let w=1;w<=4;w++){ const n = tasks.filter(t=>t.cad===cad&&t.week===w).length; if (n<bestN){bestN=n;best=w;} }
   return best;
 }
+/* Switch a task's cadence in place, filling in whatever the new cadence needs
+   and dropping what it doesn't — so no delete-and-re-add. */
+function changeCadence(t, cad){
+  t.cad = cad;
+  if (cad === 'daily'){
+    delete t.day; delete t.week; delete t.month; delete t.date;
+  } else if (cad === 'once'){
+    delete t.day; delete t.week; delete t.month;
+    if (!t.date){ const d = new Date(now); d.setDate(d.getDate()+1); t.date = ymd(d); }
+  } else {
+    delete t.date;
+    if (!t.day) t.day = autoDay();
+    if (cad === 'weekly'){ delete t.week; delete t.month; }
+    else {
+      if (!t.week) t.week = autoWeek(cad);
+      if (cad === 'annual'){ if (typeof t.month !== 'number') t.month = now.getMonth(); }
+      else delete t.month;
+    }
+  }
+  saveTasks(); render();
+}
 
 /* ================= state ================= */
 let state = {};
@@ -1039,6 +1080,34 @@ function addExtra(text){
   const list = extras().slice();
   list.push({ t:text, d:false });
   state['EXW'] = list; save();
+}
+function editExtra(idx, text){
+  const list = extras().slice();
+  if (!list[idx]) return;
+  list[idx] = { t:text, d:list[idx].d };
+  state['EXW'] = list; save();
+}
+/* Non-negotiables pin an extra by its position ('EX#2'), so removing one has to
+   shift those pins down or they'd point at the wrong to-do. */
+function deleteExtra(idx){
+  const list = extras().slice();
+  if (!list[idx]) return;
+  list.splice(idx, 1);
+  state['EXW'] = list;
+  let touched = false;
+  Object.keys(nn).forEach(k=>{
+    const out = [];
+    (nn[k] || []).forEach(rk=>{
+      if (rk.indexOf('EX#') !== 0){ out.push(rk); return; }
+      const j = +rk.slice(3);
+      if (j === idx){ touched = true; return; }
+      if (j > idx){ out.push('EX#'+(j-1)); touched = true; return; }
+      out.push(rk);
+    });
+    nn[k] = out;
+  });
+  if (touched) localStorage.setItem('mwl-nn', JSON.stringify(nn));
+  save();
 }
 
 /* weekly plan — persistent, rolls until changed */
@@ -1245,6 +1314,28 @@ function extraRow(day, idx, inCard){
       if (!nnToggle(day, rk)){ alert('You already have five. Unpin one first — that’s the point.'); return; }
       if (nnHas(day, rk)) burstAt(st,false); render(); };
     flex.appendChild(st);
+
+    const ed = document.createElement('button'); ed.className='exbtn';
+    ed.innerHTML = '&#9998;';
+    ed.title = 'Edit this to-do'; ed.setAttribute('aria-label','Edit this to-do');
+    ed.onclick = (e)=>{
+      e.preventDefault();
+      const v = prompt('Edit this to-do (clear the box to delete it):', x.t);
+      if (v === null) return;
+      if (!v.trim()){ deleteExtra(idx); render(); return; }
+      editExtra(idx, v.trim()); render();
+    };
+    flex.appendChild(ed);
+
+    const rm = document.createElement('button'); rm.className='exbtn del';
+    rm.innerHTML = '&times;';
+    rm.title = 'Delete this to-do'; rm.setAttribute('aria-label','Delete this to-do');
+    rm.onclick = (e)=>{
+      e.preventDefault();
+      if (!confirm('Delete “' + x.t + '”?')) return;
+      deleteExtra(idx); render();
+    };
+    flex.appendChild(rm);
   }
   row.appendChild(flex);
   return row;
@@ -1481,7 +1572,7 @@ function attachLongPress(el, cb){
 function renderAll(){
   const wrap = document.getElementById('schedList'); wrap.innerHTML = '';
   const tip = document.createElement('div'); tip.className='exnote'; tip.style.padding='0 2px 8px';
-  tip.textContent = 'Tip: long-press a task name to rename it — the change shows on your Week tab too.';
+  tip.textContent = 'Long-press a name to rename it. The pill on the right is its zone, and "how often" swaps a task between weekly, monthly, quarterly and annual without redoing it.';
   wrap.appendChild(tip);
   const groups = [
     ['daily','Every day',''],
@@ -1504,41 +1595,67 @@ function renderAll(){
     }
     list.forEach(t=>{
       const row = document.createElement('div'); row.className='srow';
+
+      /* ---- line 1: name, zone, delete ---- */
+      const top = document.createElement('div'); top.className='stop';
       const lbl = document.createElement('span'); lbl.className='lbl';
       lbl.textContent = t.label; lbl.title='Long-press to rename'; lbl.style.cursor='pointer';
       attachLongPress(lbl, ()=>{ const v=prompt('Rename task:', t.label);
         if (v!==null && v.trim()){ t.label=v.trim(); saveTasks(); render(); } });
-      row.appendChild(lbl);
+      top.appendChild(lbl);
+
+      const zs = document.createElement('select'); zs.className='zsel';
+      zs.title = 'Zone — change it to move this task';
+      const zones = BUCKETS.slice();
+      if (t.bucket && zones.indexOf(t.bucket) === -1) zones.push(t.bucket);
+      zones.forEach(b=>{ const o=document.createElement('option'); o.textContent=b;
+        if (b===t.bucket) o.selected=true; zs.appendChild(o); });
+      zs.onchange = ()=>{ t.bucket = zs.value; saveTasks(); render(); };
+      top.appendChild(zs);
+
+      const del = document.createElement('button'); del.className='del'; del.textContent='×';
+      del.onclick = ()=>{ if (confirm('Remove "'+t.label+'"?')){
+        tasks = tasks.filter(x=>x.id!==t.id); saveTasks(); render(); } };
+      top.appendChild(del);
+      row.appendChild(top);
+
+      /* ---- line 2: how often, and whatever that cadence needs ---- */
+      const ctl = document.createElement('div'); ctl.className='sctl';
+
+      const cs = document.createElement('select'); cs.className='cadsel';
+      cs.title = 'How often this repeats';
+      CADENCES.forEach(([val,label])=>{ const o=document.createElement('option');
+        o.value=val; o.textContent=label; if (val===t.cad) o.selected=true; cs.appendChild(o); });
+      cs.onchange = ()=> changeCadence(t, cs.value);
+      ctl.appendChild(cs);
+
       if (t.cad !== 'daily' && t.cad !== 'once'){
         const ds = document.createElement('select');
         DAYS.forEach(dn=>{ const o=document.createElement('option'); o.textContent=dn;
           if (dn===t.day) o.selected=true; ds.appendChild(o); });
         ds.onchange = ()=>{ t.day = ds.value; saveTasks(); render(); };
-        row.appendChild(ds);
+        ctl.appendChild(ds);
       }
       if (t.cad==='monthly'||t.cad==='quarterly'||t.cad==='annual'){
         const ws = document.createElement('select');
         for (let w=1;w<=4;w++){ const o=document.createElement('option'); o.value=w; o.textContent='Wk '+w;
           if (w===t.week) o.selected=true; ws.appendChild(o); }
         ws.onchange = ()=>{ t.week = +ws.value; saveTasks(); render(); };
-        row.appendChild(ws);
+        ctl.appendChild(ws);
       }
       if (t.cad==='annual'){
         const ms = document.createElement('select');
         MONTH_NAMES.forEach((mn,mi)=>{ const o=document.createElement('option'); o.value=mi; o.textContent=mn;
           if (mi===t.month) o.selected=true; ms.appendChild(o); });
         ms.onchange = ()=>{ t.month = +ms.value; saveTasks(); render(); };
-        row.appendChild(ms);
+        ctl.appendChild(ms);
       }
       if (t.cad==='once'){
         const di = document.createElement('input'); di.type='date'; di.value = t.date||'';
         di.onchange = ()=>{ t.date = di.value; saveTasks(); render(); };
-        row.appendChild(di);
+        ctl.appendChild(di);
       }
-      const del = document.createElement('button'); del.className='del'; del.textContent='×';
-      del.onclick = ()=>{ if (confirm('Remove "'+t.label+'"?')){
-        tasks = tasks.filter(x=>x.id!==t.id); saveTasks(); render(); } };
-      row.appendChild(del);
+      row.appendChild(ctl);
       sec.appendChild(row);
     });
     if (cad === 'once'){
@@ -2091,6 +2208,12 @@ function estimateLocal(text){
   return { c:Math.round(c), p:Math.round(p), matched };
 }
 /* your own most-logged items, newest macros wins — powers the quick-add chips */
+/* add an already-costed item straight to today's log — no estimating step */
+function addLoggedFood(item){
+  const list = foodLog(foodDay).slice();
+  list.push({ n:item.n, c:item.c, p:item.p, st:'done', src:'quick' });
+  food[foodDay] = list; saveFood(); render();
+}
 function frequentFoods(n){
   const seen = {};
   Object.keys(food).forEach(d=>{
@@ -2374,6 +2497,38 @@ function renderFood(){
   }
   wrap.appendChild(weekCard);
 
+  /* ---- Your go-tos: everything you log repeatedly, one tap to add ---- */
+  const gotos = frequentFoods(30);
+  const gCard = document.createElement('section'); gCard.className='pcard';
+  const gHead = document.createElement('h3');
+  gHead.textContent = gotos.length ? 'Your go-tos · ' + gotos.length : 'Your go-tos';
+  gCard.appendChild(gHead);
+  if (!gotos.length){
+    const em = document.createElement('div'); em.className='exnote';
+    em.textContent = 'Anything you log twice or more shows up here, with its calories and protein remembered — so repeat meals become one tap.';
+    gCard.appendChild(em);
+  } else {
+    const gl = document.createElement('div'); gl.className='gtlist';
+    gotos.forEach(u=>{
+      const b = document.createElement('button'); b.className='gtrow';
+      const nm = document.createElement('span'); nm.className='gtn'; nm.textContent = u.n;
+      const mc = document.createElement('span'); mc.className='gtm';
+      mc.textContent = u.c + ' cal · ' + u.p + 'g';
+      const cnt = document.createElement('span'); cnt.className='gtc';
+      cnt.textContent = '×' + u.count;
+      const plus = document.createElement('span'); plus.className='gtx'; plus.textContent = '+';
+      b.appendChild(nm); b.appendChild(cnt); b.appendChild(mc); b.appendChild(plus);
+      b.title = 'Logged ' + u.count + ' times — tap to add to today';
+      b.onclick = ()=>{ burstAt(b,false); addLoggedFood(u); };
+      gl.appendChild(b);
+    });
+    gCard.appendChild(gl);
+    const gn = document.createElement('div'); gn.className='exnote';
+    gn.textContent = 'Sorted by how often you log it. Tap to add — the numbers come from the last time you logged it.';
+    gCard.appendChild(gn);
+  }
+  wrap.appendChild(gCard);
+
   const logCard = document.createElement('section'); logCard.className='pcard flog';
   logCard.innerHTML = '<h3>Food log</h3>';
   const nIn = document.createElement('input'); nIn.type='text'; nIn.className='fn';
@@ -2397,26 +2552,6 @@ function renderFood(){
   nIn.onkeydown = (e)=>{ if (e.key==='Enter') addFood(); };
   logCard.appendChild(addBtn);
 
-  /* ---- one-tap repeats: your usuals, and yesterday's whole log ---- */
-  function addKnown(item){
-    const list = foodLog(foodDay).slice();
-    list.push({ n:item.n, c:item.c, p:item.p, st:'done', src:'quick' });
-    food[foodDay] = list; saveFood(); render();
-  }
-  const usuals = frequentFoods(6);
-  if (usuals.length){
-    const qh = document.createElement('div'); qh.className='qahead'; qh.textContent='Your usuals';
-    logCard.appendChild(qh);
-    const chips = document.createElement('div'); chips.className='qachips';
-    usuals.forEach(u=>{
-      const b = document.createElement('button'); b.className='qachip';
-      b.innerHTML = '<span>'+u.n+'</span><i>'+u.c+' cal · '+u.p+'g</i>';
-      b.title = 'Logged '+u.count+' times — tap to add again';
-      b.onclick = ()=>{ burstAt(b,false); addKnown(u); };
-      chips.appendChild(b);
-    });
-    logCard.appendChild(chips);
-  }
   const yKey = shiftYmd(foodDay, -1);
   const yLog = (food[yKey] || []).filter(e=>e.st !== 'pending' && e.c !== null);
   if (yLog.length && !log.length){
