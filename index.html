@@ -175,16 +175,17 @@
   .sphead { display:flex; align-items:center; gap:8px; padding:12px 0 6px;
     border-bottom:1px solid var(--line); margin-bottom:2px; }
   .spname { font-size:1rem; font-weight:800; letter-spacing:-0.01em; cursor:pointer;
-    flex:none; max-width:42%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .spcount { margin-left:auto; font-size:0.68rem; color:var(--muted); font-weight:600; flex:none; }
+    flex:1 1 auto; min-width:0; line-height:1.2; }
+  .spcount { margin-left:auto; font-size:0.68rem; color:var(--muted); font-weight:600;
+    flex:none; white-space:nowrap; }
   .spwarn { font-size:0.7rem; color:#a3245a; background:#fbe9f0; border-radius:8px;
     padding:6px 9px; margin:8px 0 2px; }
   .sptaskadd { display:flex; gap:6px; padding:10px 0 6px; border-top:1px solid var(--line); }
   .sptaskadd .mealin { flex:1; min-width:0; }
   /* inside a space card the zone and day just echo the header, so keep them
      quiet — they're controls for the exceptions, not labels */
-  .spacecard .srow select.zsel { background:none; color:var(--muted);
-    font-weight:600; max-width:104px; }
+  .spacecard .srow select.zsel { background:none; color:#b6acc2;
+    font-weight:600; font-size:0.64rem; max-width:none; padding:3px 2px 3px 6px; }
   .spacecard .sctl select { color:var(--muted); }
   .spacecard .sctl select.cadsel { color:var(--accent); }
   .srow select.offday { border-color:var(--gold); color:var(--gold) !important;
@@ -197,6 +198,10 @@
   .daysub:first-of-type { border-top:none; margin-top:0; padding-top:6px; }
   .daysub .dn { font-size:0.66rem; font-weight:600; color:var(--muted); }
   .daysub + .srow { border-top:none; }
+  .spnoday { border:none; background:none; font-family:inherit; font-size:0.7rem;
+    font-weight:600; color:var(--muted); font-style:italic; cursor:pointer;
+    padding:3px 4px; flex:none; }
+  .spnoday:active { color:var(--accent); }
 
   .nncard { background:var(--card); border:1.5px solid #d8c3ea; border-radius:16px;
     padding:6px 15px 4px; margin-bottom:14px; box-shadow:var(--shadow); }
@@ -310,6 +315,26 @@
     padding:10px 0 3px; border-top:1px solid var(--line); }
   .worksubhead:first-of-type { border-top:none; }
   .wtask.sub { padding-left:20px; border-top:none; }
+  /* editing the standing work list */
+  #workView .pcard h3 { display:flex; justify-content:space-between; align-items:center; }
+  .wkedit { border:1px solid #E5E5E5; background:#fff; color:#111111; font-family:inherit;
+    font-size:0.66rem; font-weight:700; text-transform:none; letter-spacing:0;
+    padding:4px 12px; border-radius:999px; cursor:pointer; }
+  .wkedit.on { background:#F08A82; border-color:#F08A82; color:#fff; }
+  .wkedit:active { transform:scale(.95); }
+  .wktools { display:flex; align-items:center; gap:1px; flex:none; margin-left:auto; }
+  .wkt { border:none; background:none; cursor:pointer; color:#b0a99f;
+    font-size:0.78rem; line-height:1; padding:5px 4px; }
+  .wkt:disabled { opacity:.25; cursor:default; }
+  .wkt:active:not(:disabled) { color:#F08A82; }
+  .wkt.rm { color:#c98b84; font-size:0.95rem; }
+  .worksubhead { display:flex; align-items:center; gap:6px; }
+  .wkadd { border:1px dashed #E5E5E5; background:none; color:#b0a99f; font-family:inherit;
+    font-size:0.72rem; padding:6px 10px; border-radius:9px; cursor:pointer;
+    margin:2px 0 6px 20px; }
+  .wkadd:active { color:#F08A82; border-color:#F08A82; }
+  .wkaddrow { display:flex; gap:6px; margin-top:10px; }
+  .wkaddrow input { flex:1; min-width:0; }
   .wtask.sub .wl { font-size:0.85rem; }
 
   /* ---------- pizzazz ---------- */
@@ -584,6 +609,7 @@
   .rgrow .rgt { flex:none; font-size:0.58rem; font-weight:700; text-transform:uppercase;
     letter-spacing:0.05em; color:var(--accent); background:var(--accent-soft);
     border-radius:8px; padding:2px 7px; }
+  .rgrow .rgt.full { color:#0f7a52; background:#e4f6ee; }
   .rgrow .rgd { flex:none; font-size:0.66rem; font-weight:700; color:var(--muted);
     background:var(--bg); border:1px solid var(--line); border-radius:999px;
     padding:2px 8px; min-width:38px; text-align:center; }
@@ -819,11 +845,9 @@ const DEFAULT_TASKS = [
 ];
 
 let tasks;
-if (localStorage.getItem('mwl-schema') !== 'ffok1'){
-  localStorage.removeItem('mwl-tasklist');
-  localStorage.removeItem('mwl-seeded');
-  localStorage.setItem('mwl-schema','ffok1');
-}
+/* There used to be a schema check here that wiped the whole task list when a
+   version constant changed. Harmless when everything was a default; now that
+   the list is yours, it was a loaded gun — removed. */
 try { tasks = JSON.parse(localStorage.getItem('mwl-tasklist')); } catch(e){ tasks = null; }
 if (!Array.isArray(tasks)) tasks = [];
 let seeded = [];
@@ -888,9 +912,12 @@ function orphanTasks(){
   return tasks.filter(t=>known.indexOf(t.bucket) === -1);
 }
 /* Moving a space moves the tasks that were following it, and leaves alone any
-   you'd deliberately set to a different day. */
+   you'd deliberately set to a different day. Passing null means "no fixed day"
+   — for a catch-all space whose tasks are spread across the week — and leaves
+   every task's own day untouched. */
 function setSpaceDay(sp, day){
-  const wasFollowing = tasksInSpace(sp.name).filter(t=>t.day === sp.day);
+  if (!day){ sp.day = null; saveSpaces(); render(); return; }
+  const wasFollowing = sp.day ? tasksInSpace(sp.name).filter(t=>t.day === sp.day) : [];
   sp.day = day;
   wasFollowing.forEach(t=>{ if (t.cad !== 'daily' && t.cad !== 'once') t.day = day; });
   saveSpaces(); saveTasks(); render();
@@ -901,6 +928,19 @@ function renameSpace(sp, name){
   tasks.forEach(t=>{ if (t.bucket === old) t.bucket = name; });
   saveSpaces(); saveTasks(); render();
 }
+/* "Home" was never really a one-day zone — it holds daily habits, scattered
+   monthly jobs and a dozen Saturday deep-clean projects. Give it an honest
+   name and no fixed day; each task keeps whatever day it already had. */
+if (!localStorage.getItem('mwl-aroundhouse-v1')){
+  const h = spaceByName('Home');
+  if (h){
+    h.name = 'Around the House';
+    h.day = null;
+    tasks.forEach(t=>{ if (t.bucket === 'Home') t.bucket = 'Around the House'; });
+    saveSpaces(); saveTasks();
+  }
+  localStorage.setItem('mwl-aroundhouse-v1','1');
+}
 
 /* ================= fixed rhythm ================= */
 /* ================= the clock =================
@@ -909,6 +949,7 @@ function renameSpace(sp, name){
 const TIME_DEFAULTS = {
   wake:'05:00', block:'05:30', devotional:'06:00', workout:'06:00',
   james:'06:30', kids:'07:00', leave:'07:20',
+  workstart:'09:00', workend:'17:00',
   dinner:'18:00', bath:'19:00', kidsbed:'20:00', mybed:'21:15'
 };
 const TIME_FIELDS = [
@@ -919,6 +960,8 @@ const TIME_FIELDS = [
   ['james',     'Wake James'],
   ['kids',      'Wake Bennett & Emma'],
   ['leave',     'Leave for dropoff'],
+  ['workstart', 'Work starts'],
+  ['workend',   'Hard stop'],
   ['dinner',    'Dinner on the table'],
   ['bath',      'Bathtime'],
   ['kidsbed',   'Kids down'],
@@ -937,76 +980,77 @@ function tf(k){
 }
 
 function fixedPlan(day){
+  /* The 4th slot on each row is a permanent id. Checkmarks and pinned
+     non-negotiables key off it instead of the row's position, so editing the
+     routine — adding, removing or reordering a line, or changing a time —
+     can never shunt them onto the wrong row. */
   if (day === 'Sat') return {
     Morning: { time:'flex', items:[
-      ['Wake by 6:30 — keep the rhythm, gently', false],
-      ['Devotional', false],
-      ['Workout — family walk or make-up day', true, 'workout'],
-      ['Start a load of laundry', false]
+      ['Wake by 6:30 — keep the rhythm, gently', false, null, 'wake'],
+      ['Devotional', false, null, 'devotional'],
+      ['Workout — family walk or make-up day', true, 'workout', 'workout'],
+      ['Start a load of laundry', false, null, 'laundry-start']
     ]},
     Home: { time:'morning block', items:[
-      ['One household project or errand — just one', false],
-      ['Fold + put away laundry', false]
+      ['One household project or errand — just one', false, null, 'project'],
+      ['Fold + put away laundry', false, null, 'laundry-fold']
     ]},
     Evening: { time:'wind down', items:[
-      ['Kid time — something they pick', true],
-      ['Kitchen reset', false],
-      ['In bed by 9:30', false, 'bed']
+      ['Kid time — something they pick', true, null, 'kidtime'],
+      ['Kitchen reset', false, null, 'kitchen'],
+      ['In bed by 9:30', false, 'bed', 'bed']
     ]}
   };
   if (day === 'Sun'){
-    const evening = [
-      ['Kid time — something they pick', true],
-      ['Kitchen reset', false]
-    ];
-    evening.push(['Pack backpack + lunch for Monday', true]);
-    evening.push(['In bed by 9:15 — Monday’s workout starts tonight', true, 'bed']);
     return {
       Morning: { time:'flex', items:[
-        ['Wake by 6:30', false],
-        ['Devotional', false],
-        ['Rest day — easy walk only', false],
-        ['Start a load of laundry', false]
+        ['Wake by 6:30', false, null, 'wake'],
+        ['Devotional', false, null, 'devotional'],
+        ['Rest day — easy walk only', false, null, 'rest'],
+        ['Start a load of laundry', false, null, 'laundry-start']
       ]},
       Home: { time:'planning block', items:[
-        ['Meal plan the week — anchor to proteins on hand', true],
-        ['Build the prep list (what gets done at each lunch break)', false],
-        ['Fold + put away laundry', false]
+        ['Meal plan the week — anchor to proteins on hand', true, null, 'mealplan'],
+        ['Build the prep list (what gets done at each lunch break)', false, null, 'preplist'],
+        ['Fold + put away laundry', false, null, 'laundry-fold']
       ]},
-      Evening: { time:'wind down', items: evening }
+      Evening: { time:'wind down', items:[
+        ['Kid time — something they pick', true, null, 'kidtime'],
+        ['Kitchen reset', false, null, 'kitchen'],
+        ['Pack backpack + lunch for Monday', true, null, 'backpack'],
+        ['In bed by 9:15 — Monday\u2019s workout starts tonight', true, 'bed', 'bed']
+      ]}
     };
   }
-  const morning = [
-    ['Wake '+tf('wake')+' — feet on floor, no snooze', true, 'wake'],
-    ['Fold a load of laundry', false],
-    ['Make the bed', false],
-    ['Caffeine', false],
-    ['Devotional', false],
-    ['Workout', true, 'workout'],
-    ['Wake James — '+tf('james'), false],
-    ['Wake Bennett & Emma — '+tf('kids'), false],
-    ['Out the door for dropoff — '+tf('leave'), true]
-  ];
   return {
-    Morning: { time: tf('wake')+' – '+tf('leave'), items: morning },
-    'Work Day': { time:'9:00 – 4/5', items:[
-      ['', false, 'steps'],
-      ['Lunch break: dinner prep (chop, marinate, or crockpot on)', true],
-      ['Hard stop by 5:00', false]
+    Morning: { time: tf('wake')+' \u2013 '+tf('leave'), items:[
+      ['Wake '+tf('wake')+' \u2014 feet on floor, no snooze', true, 'wake', 'wake'],
+      ['Fold + put away laundry', false, null, 'laundry-fold'],
+      ['Make the bed', false, null, 'makebed'],
+      ['Devotional', false, null, 'devotional'],
+      ['Workout', true, 'workout', 'workout'],
+      ['Wake James \u2014 '+tf('james'), false, null, 'wake-james'],
+      ['Wake Bennett & Emma \u2014 '+tf('kids'), false, null, 'wake-kids'],
+      ['Out the door for dropoff \u2014 '+tf('leave'), true, null, 'leave']
+    ]},
+    'Work Day': { time: tf('workstart')+' \u2013 '+tf('workend'), items:[
+      ['', false, 'steps', 'steps'],
+      ['Lunch break: dinner prep (chop, marinate, or crockpot on)', true, null, 'lunchprep'],
+      ['Hard stop by '+tf('workend'), false, null, 'hardstop']
     ]},
     Home: { time:'fits in the gaps', items:[
-      ['Switch laundry to dryer (mid-morning)', false],
-      ['Fold + put away — one basket, same day', false],
-      ['10-min toy pickup with the kids (~5:30)', false]
+      ['Start a load of laundry', false, null, 'laundry-start'],
+      ['Switch laundry to dryer (mid-morning)', false, null, 'laundry-dryer'],
+      ['10-min toy pickup with the kids (~5:30)', false, null, 'toypickup']
     ]},
-    Evening: { time: tf('dinner')+' – '+tf('mybed'), items:[
-      ['Dinner on the table at '+tf('dinner'), false, 'meal'],
-      ['Kid time — 20 minutes, undivided, after dinner', true],
-      ['Bathtime — '+tf('bath'), false],
-      ['Kids down by '+tf('kidsbed'), false],
-      ['Kitchen reset + dishwasher running', false],
-      ['Lay out workout clothes + tomorrow’s top 3', false],
-      ['In bed by '+tf('mybed')+' — this protects tomorrow’s workout', true, 'bed']
+    Evening: { time: tf('dinner')+' \u2013 '+tf('mybed'), items:[
+      ['Dinner on the table at '+tf('dinner'), false, 'meal', 'dinner'],
+      ['Kid time \u2014 20 minutes, undivided, after dinner', true, null, 'kidtime'],
+      ['Bathtime \u2014 '+tf('bath'), false, null, 'bath'],
+      ['Kids down by '+tf('kidsbed'), false, null, 'kidsbed'],
+      ['Kitchen reset + dishwasher running', false, null, 'kitchen'],
+      ['Lay out workout clothes + tomorrow\u2019s top 3', false, null, 'layout'],
+      ['In bed by '+tf('mybed')+' \u2014 this protects tomorrow\u2019s workout', true, 'bed', 'bed']
     ]}
   };
 }
@@ -1153,7 +1197,7 @@ if (!localStorage.getItem('mwl-anchmig-v1')){
     const plan = fixedPlan(dn);
     for (const b in plan){
       plan[b].items.forEach((it,i)=>{
-        if (!state[fixedId(dn,b,i)]) return;
+        if (!state[fixedId(dn,b,it[3])]) return;
         if (it[2] === 'workout' || it[2] === 'wake' || it[2] === 'bed')
           state[anchorKey(it[2], dn)] = true;
       });
@@ -1202,7 +1246,34 @@ function nnToggle(day, rk){
   nn[k] = list; localStorage.setItem('mwl-nn', JSON.stringify(nn));
   return true;
 }
-function fixedId(d,b,i){ return d+'|'+b+'|'+i; }
+function fixedId(d,b,slug){ return d+'|'+b+'|'+slug; }
+/* Ticks and pins used to be filed by a row's position, so any routine edit
+   shifted them onto the wrong row. Re-file them against the row ids, matching
+   by position one final time. */
+if (!localStorage.getItem('mwl-slugmig-v1')){
+  let movedState = false, movedPins = false;
+  DAYS.forEach(dn=>{
+    const plan = fixedPlan(dn);
+    for (const b in plan){
+      plan[b].items.forEach((it,i)=>{
+        const slug = it[3]; if (!slug) return;
+        const oldK = dn+'|'+b+'|'+i, newK = dn+'|'+b+'|'+slug;
+        if (state[oldK] !== undefined && state[newK] === undefined){
+          state[newK] = state[oldK]; delete state[oldK]; movedState = true;
+        }
+        const oldRk = b+'#'+i, newRk = b+'#'+slug;
+        const list = nn[dn];
+        if (list){
+          const at = list.indexOf(oldRk);
+          if (at !== -1){ list[at] = newRk; movedPins = true; }
+        }
+      });
+    }
+  });
+  if (movedState) save();
+  if (movedPins) localStorage.setItem('mwl-nn', JSON.stringify(nn));
+  localStorage.setItem('mwl-slugmig-v1','1');
+}
 function storeId(d,t){ return 'T|'+d+'|'+t; }
 function noteId(d){ return 'wnote|'+d; }
 
@@ -1274,7 +1345,7 @@ function getWorkout(d){ return workouts[d] || ''; }
 function dayProgress(day){
   const plan = fixedPlan(day);
   let total=0, done=0;
-  for (const b in plan){ plan[b].items.forEach((_,i)=>{ total++; if (state[fixedId(day,b,i)]) done++; }); }
+  for (const b in plan){ plan[b].items.forEach(it=>{ total++; if (state[fixedId(day,b,it[3])]) done++; }); }
   liveTasksOn(day).forEach(t=>{ total++; if (state[storeId(day,t.id)]) done++; });
   extras().forEach(x=>{ total++; if (x.d) done++; });
   return { total, done };
@@ -1464,7 +1535,7 @@ function renderWeek(){
   names.forEach(bucket=>{
     const fixed = plan[bucket] ? plan[bucket].items : [];
     fixed.forEach((it,i)=> all.push({ bucket, text:it[0], anchor:it[1], special:it[2],
-      id:fixedId(selDay,bucket,i), rk:bucket+'#'+i, tag:'' }));
+      id:fixedId(selDay,bucket,it[3]), rk:bucket+'#'+it[3], tag:'' }));
     dayTasks.filter(t=>t.bucket===bucket).forEach(t=> all.push({ bucket, text:t.label,
       anchor:false, special:null, id:storeId(selDay,t.id), rk:'T#'+t.id,
       tag:t.cad==='weekly'?'':t.cad, task:t,
@@ -1710,19 +1781,25 @@ function renderAll(){
       if (v!==null && v.trim()){ t.label=v.trim(); saveTasks(); render(); } });
     top.appendChild(lbl);
 
-    /* move it to a different space */
+    /* Move to another space. Inside a space card the current name is already in
+       the header, so this stays a compact control rather than repeating it on
+       every row. */
     const zs = document.createElement('select'); zs.className='zsel';
-    zs.title = 'Move to another space';
-    spaceNames().forEach(n=>{ const o=document.createElement('option'); o.textContent=n;
-      if (n===t.bucket) o.selected=true; zs.appendChild(o); });
-    if (!spaceByName(t.bucket)){
-      const o=document.createElement('option'); o.textContent=t.bucket||'—';
-      o.selected=true; zs.insertBefore(o, zs.firstChild);
-    }
+    zs.title = 'Move "' + t.label + '" to another space';
+    const ph = document.createElement('option');
+    ph.value = ''; ph.textContent = sp ? 'move ⇢' : (t.bucket || '—');
+    ph.selected = true; zs.appendChild(ph);
+    spaceNames().forEach(n=>{
+      if (sp && n === t.bucket) return;
+      const o = document.createElement('option'); o.value = n; o.textContent = n;
+      if (!sp && n === t.bucket) o.selected = true;
+      zs.appendChild(o);
+    });
     zs.onchange = ()=>{
+      if (!zs.value) return;
       t.bucket = zs.value;
       const dest = spaceByName(zs.value);
-      if (dest && t.cad !== 'daily' && t.cad !== 'once') t.day = dest.day;
+      if (dest && dest.day && t.cad !== 'daily' && t.cad !== 'once') t.day = dest.day;
       saveTasks(); render();
     };
     top.appendChild(zs);
@@ -1741,16 +1818,17 @@ function renderAll(){
     cs.onchange = ()=>{
       const to = cs.value;
       changeCadence(t, to);
-      if (sp && to !== 'daily' && to !== 'once'){ t.day = sp.day; saveTasks(); render(); }
+      if (sp && sp.day && to !== 'daily' && to !== 'once'){ t.day = sp.day; saveTasks(); render(); }
     };
     ctl.appendChild(cs);
 
     if (t.cad !== 'daily' && t.cad !== 'once'){
       const ds = document.createElement('select');
-      ds.title = sp ? 'Defaults to ' + DAY_FULL[sp.day] + ' — change only if this one differs' : 'Day';
+      ds.title = (sp && sp.day) ? 'Defaults to ' + DAY_FULL[sp.day] + ' — change only if this one differs'
+                                : 'The day this task runs';
       DAYS.forEach(dn=>{ const o=document.createElement('option'); o.textContent=dn;
         if (dn===t.day) o.selected=true; ds.appendChild(o); });
-      if (sp && t.day !== sp.day) ds.className = 'offday';
+      if (sp && sp.day && t.day !== sp.day) ds.className = 'offday';
       ds.onchange = ()=>{ t.day = ds.value; saveTasks(); render(); };
       ctl.appendChild(ds);
     }
@@ -1786,8 +1864,8 @@ function renderAll(){
       if (di(a) !== di(b)) return di(a) - di(b);
       return a.label.localeCompare(b.label);
     });
-    const offDay = list.filter(t=>t.day && t.day !== sp.day &&
-      t.cad !== 'daily' && t.cad !== 'once').length;
+    const offDay = sp.day ? list.filter(t=>t.day && t.day !== sp.day &&
+      t.cad !== 'daily' && t.cad !== 'once').length : 0;
 
     const sec = document.createElement('section'); sec.className='sched spacecard';
     const head = document.createElement('div'); head.className='sphead';
@@ -1802,11 +1880,31 @@ function renderAll(){
       renameSpace(sp, v.trim());
     });
 
-    const dsel = document.createElement('select'); dsel.className='spday';
-    dsel.title = 'The day this space gets done';
-    DAYS.forEach(dn=>{ const o=document.createElement('option'); o.value=dn;
-      o.textContent=DAY_FULL[dn]; if (dn===sp.day) o.selected=true; dsel.appendChild(o); });
-    dsel.onchange = ()=> setSpaceDay(sp, dsel.value);
+    /* A space with no fixed day gets a plain label instead of a day picker —
+       its tasks are spread across the week and each keeps its own day. */
+    let dsel;
+    if (sp.day){
+      dsel = document.createElement('select'); dsel.className='spday';
+      dsel.title = 'The day this space gets done';
+      DAYS.forEach(dn=>{ const o=document.createElement('option'); o.value=dn;
+        o.textContent=DAY_FULL[dn]; if (dn===sp.day) o.selected=true; dsel.appendChild(o); });
+      const none = document.createElement('option');
+      none.value=''; none.textContent='No fixed day'; dsel.appendChild(none);
+      dsel.onchange = ()=> setSpaceDay(sp, dsel.value);
+    } else {
+      dsel = document.createElement('button'); dsel.className='spnoday';
+      dsel.textContent = 'various days';
+      dsel.title = 'Tasks here keep their own days — tap to give the whole space one day';
+      dsel.onclick = ()=>{
+        const v = prompt('Give ' + sp.name + ' a single day?\n\n' +
+          'Type Sun, Mon, Tue, Wed, Thu, Fri or Sat — or leave blank to keep various days.');
+        if (v === null || !v.trim()) return;
+        const want = v.trim().slice(0,3);
+        const match = DAYS.filter(d=>d.toLowerCase() === want.toLowerCase())[0];
+        if (!match){ alert('Didn’t recognise that day.'); return; }
+        setSpaceDay(sp, match);
+      };
+    }
 
     const cnt = document.createElement('span'); cnt.className='spcount';
     cnt.textContent = list.length + (list.length===1?' task':' tasks');
@@ -1846,7 +1944,8 @@ function renderAll(){
     function addTask(){
       const v = ti.value.trim(); if (!v) return;
       tasks.push({ id:'u'+Date.now()+Math.random().toString(36).slice(2,5),
-        label:v, cad:'weekly', bucket:sp.name, day:sp.day });
+        label:v, cad:'weekly', bucket:sp.name,
+        day: sp.day || DAYS[now.getDay()] });   /* dayless space: start on today, editable per task */
       saveTasks(); ti.value=''; burstAt(ab,false); render();
     }
     ab.onclick = addTask;
@@ -2960,8 +3059,10 @@ function renderFood(){
   wrap.appendChild(logCard);
 }
 
-/* ================= work ================= */
-const WORK_WEEK = {
+/* ================= work =================
+   The standing weekly list is yours to edit now. Each item carries its own id
+   so renaming, reordering or deleting one never shuffles another's checkmark. */
+const WORK_WEEK_SEED = {
   Mon: [
     { t:'Prep for L10', sub:['Pull scorecard data','Review to-do list','Prioritize issues'] },
     'Review ads', 'Review ads', 'Plan week', "Sassy's 1:1"
@@ -2973,8 +3074,54 @@ const WORK_WEEK = {
   Sat: ['Story Selection','Set featured story'],
   Sun: []
 };
-const WORK_STANDING = ['Review Praying the News','Review News Health'];
+const WORK_STANDING_SEED = ['Review Praying the News','Review News Health'];
+let wkSeq = 0;
+function newWorkId(){ return 'w'+Date.now().toString(36)+(wkSeq++).toString(36); }
+
+let workweek = null, workstanding = null;
+try { workweek = JSON.parse(localStorage.getItem('mwl-workweek') || 'null'); } catch(e){ workweek = null; }
+try { workstanding = JSON.parse(localStorage.getItem('mwl-workstanding') || 'null'); } catch(e){ workstanding = null; }
+function saveWorkWeek(){ localStorage.setItem('mwl-workweek', JSON.stringify(workweek)); }
+function saveWorkStanding(){ localStorage.setItem('mwl-workstanding', JSON.stringify(workstanding)); }
+
+if (!workweek || typeof workweek !== 'object'){
+  workweek = {};
+  const carry = {};                       /* old positional key -> new id key */
+  DAYS.forEach(dn=>{
+    workweek[dn] = (WORK_WEEK_SEED[dn] || []).map((raw,i)=>{
+      const src = typeof raw === 'string' ? { t:raw } : raw;
+      const o = { id:newWorkId(), t:src.t };
+      if (src.sub && src.sub.length){
+        o.sub = src.sub.map((s,j)=>{
+          const sub = { id:newWorkId(), t:s };
+          carry['WKS|'+dn+'|'+i+'|'+j] = 'WKS|'+sub.id;
+          return sub;
+        });
+      } else {
+        carry['WK|'+dn+'|'+i] = 'WK|'+o.id;
+      }
+      return o;
+    });
+  });
+  /* keep this week's ticks attached as the keys change shape */
+  let moved = false;
+  Object.keys(carry).forEach(oldK=>{
+    if (state[oldK]){ state[carry[oldK]] = state[oldK]; delete state[oldK]; moved = true; }
+  });
+  if (moved) save();
+  saveWorkWeek();
+}
+if (!Array.isArray(workstanding)){
+  workstanding = WORK_STANDING_SEED.map((t,i)=>{
+    const o = { id:newWorkId(), t:t };
+    if (state['WKST|'+i]){ state['WKST|'+o.id] = true; delete state['WKST|'+i]; }
+    if (state['WKST-T|'+i]){ state['WKST-T|'+o.id] = true; delete state['WKST-T|'+i]; }
+    return o;
+  });
+  save(); saveWorkStanding();
+}
 let workDay = DAYS[now.getDay()];
+let workEdit = false;
 
 let worktasks = [];
 try { worktasks = JSON.parse(localStorage.getItem('mwl-worktasks') || '[]'); } catch(e){ worktasks = []; }
@@ -2997,12 +3144,16 @@ if (!localStorage.getItem('mwl-links-slack')){
 
 function workLeaves(day){
   const keys = [];
-  (WORK_WEEK[day]||[]).forEach((raw,i)=>{
-    const item = typeof raw==='string' ? { t:raw } : raw;
-    if (item.sub && item.sub.length) item.sub.forEach((s,j)=> keys.push('WKS|'+day+'|'+i+'|'+j));
-    else keys.push('WK|'+day+'|'+i);
+  (workweek[day]||[]).forEach(item=>{
+    if (item.sub && item.sub.length) item.sub.forEach(s=> keys.push('WKS|'+s.id));
+    else keys.push('WK|'+item.id);
   });
   return keys;
+}
+/* remove an item and any checkmarks it owned */
+function dropWorkKeys(item){
+  if (item.sub && item.sub.length) item.sub.forEach(s=>{ delete state['WKS|'+s.id]; });
+  else delete state['WK|'+item.id];
 }
 function workRow(key, label, isSub, todayKey){
   const done = !!state[key];
@@ -3063,29 +3214,135 @@ function renderWork(){
   const wkCard = document.createElement('section'); wkCard.className='pcard';
   const wp = workLeaves(workDay);
   const wdone = wp.filter(k=>state[k]).length;
-  wkCard.innerHTML = '<h3>'+DAY_FULL[workDay]+' — standard'+(wp.length?' · '+wdone+'/'+wp.length:'')+'</h3>';
-  const items = WORK_WEEK[workDay] || [];
-  if (!items.length){
+  const wh = document.createElement('h3');
+  wh.innerHTML = '<span>'+DAY_FULL[workDay]+' — standard'+(wp.length?' · '+wdone+'/'+wp.length:'')+'</span>';
+  const eb = document.createElement('button'); eb.className='wkedit'+(workEdit?' on':'');
+  eb.textContent = workEdit ? 'Done' : 'Edit';
+  eb.onclick = ()=>{ workEdit = !workEdit; renderWork(); };
+  wh.appendChild(eb);
+  wkCard.appendChild(wh);
+
+  const items = workweek[workDay] || [];
+  if (!items.length && !workEdit){
     const em = document.createElement('div'); em.className='exnote';
     em.textContent = 'No standing work tasks on '+DAY_FULL[workDay]+'.';
     wkCard.appendChild(em);
   }
-  items.forEach((raw,i)=>{
-    const item = typeof raw==='string' ? { t:raw } : raw;
-    if (item.sub && item.sub.length){
+
+  /* the ✎ ✕ ▲▼ cluster shown while editing */
+  function editTools(opts){
+    const box = document.createElement('span'); box.className='wktools';
+    const mk = (glyph, title, fn, disabled)=>{
+      const b = document.createElement('button'); b.className='wkt';
+      b.innerHTML = glyph; b.title = title;
+      if (disabled) b.disabled = true; else b.onclick = fn;
+      return b;
+    };
+    if (opts.up)   box.appendChild(mk('&#9650;','Move up', opts.up, opts.upOff));
+    if (opts.down) box.appendChild(mk('&#9660;','Move down', opts.down, opts.downOff));
+    box.appendChild(mk('&#9998;','Rename', opts.rename));
+    const del = mk('&times;','Delete', opts.del); del.classList.add('rm');
+    box.appendChild(del);
+    return box;
+  }
+
+  items.forEach((item,i)=>{
+    const isParent = !!(item.sub && item.sub.length);
+    if (isParent){
       const head = document.createElement('div'); head.className='worksubhead';
-      head.textContent = item.t; wkCard.appendChild(head);
-      item.sub.forEach((sname,j)=> wkCard.appendChild(workRow('WKS|'+workDay+'|'+i+'|'+j, sname, true)));
+      const ht = document.createElement('span'); ht.textContent = item.t;
+      head.appendChild(ht);
+      if (workEdit) head.appendChild(editTools({
+        up: ()=>{ items.splice(i-1,0,items.splice(i,1)[0]); saveWorkWeek(); renderWork(); }, upOff: i===0,
+        down: ()=>{ items.splice(i+1,0,items.splice(i,1)[0]); saveWorkWeek(); renderWork(); }, downOff: i===items.length-1,
+        rename: ()=>{ const v=prompt('Rename:', item.t); if (v && v.trim()){ item.t=v.trim(); saveWorkWeek(); renderWork(); } },
+        del: ()=>{ if (!confirm('Delete "'+item.t+'" and its '+item.sub.length+' steps?')) return;
+          dropWorkKeys(item); items.splice(i,1); save(); saveWorkWeek(); renderWork(); }
+      }));
+      wkCard.appendChild(head);
+      item.sub.forEach((s,j)=>{
+        const r = workRow('WKS|'+s.id, s.t, true);
+        if (workEdit) r.appendChild(editTools({
+          rename: ()=>{ const v=prompt('Rename step:', s.t); if (v && v.trim()){ s.t=v.trim(); saveWorkWeek(); renderWork(); } },
+          del: ()=>{ if (!confirm('Delete step "'+s.t+'"?')) return;
+            delete state['WKS|'+s.id]; item.sub.splice(j,1); save(); saveWorkWeek(); renderWork(); }
+        }));
+        wkCard.appendChild(r);
+      });
+      if (workEdit){
+        const addSub = document.createElement('button'); addSub.className='wkadd sub';
+        addSub.textContent = '+ step under ' + item.t;
+        addSub.onclick = ()=>{ const v=prompt('New step under "'+item.t+'":'); if (!v || !v.trim()) return;
+          item.sub.push({ id:newWorkId(), t:v.trim() }); saveWorkWeek(); renderWork(); };
+        wkCard.appendChild(addSub);
+      }
     } else {
-      wkCard.appendChild(workRow('WK|'+workDay+'|'+i, item.t, false));
+      const r = workRow('WK|'+item.id, item.t, false);
+      if (workEdit) r.appendChild(editTools({
+        up: ()=>{ items.splice(i-1,0,items.splice(i,1)[0]); saveWorkWeek(); renderWork(); }, upOff: i===0,
+        down: ()=>{ items.splice(i+1,0,items.splice(i,1)[0]); saveWorkWeek(); renderWork(); }, downOff: i===items.length-1,
+        rename: ()=>{ const v=prompt('Rename:', item.t); if (v && v.trim()){ item.t=v.trim(); saveWorkWeek(); renderWork(); } },
+        del: ()=>{ if (!confirm('Delete "'+item.t+'"?')) return;
+          dropWorkKeys(item); items.splice(i,1); save(); saveWorkWeek(); renderWork(); },
+        sub: true
+      }));
+      wkCard.appendChild(r);
     }
   });
+
+  if (workEdit){
+    const addRow2 = document.createElement('div'); addRow2.className='wkaddrow';
+    const ai = document.createElement('input'); ai.type='text'; ai.className='mealin';
+    ai.placeholder = 'Add to ' + DAY_FULL[workDay];
+    const ab = document.createElement('button'); ab.className='wbtn'; ab.textContent='Add';
+    function addWorkItem(){
+      const v = ai.value.trim(); if (!v) return;
+      workweek[workDay] = workweek[workDay] || [];
+      workweek[workDay].push({ id:newWorkId(), t:v });
+      saveWorkWeek(); ai.value=''; burstAt(ab,false); renderWork();
+    }
+    ab.onclick = addWorkItem;
+    ai.onkeydown = e=>{ if (e.key === 'Enter') addWorkItem(); };
+    addRow2.appendChild(ai); addRow2.appendChild(ab);
+    wkCard.appendChild(addRow2);
+    const cn = document.createElement('div'); cn.className='exnote';
+    cn.textContent = 'Changes here apply every week. Ticks stay attached to their own item, so reordering or renaming won’t move them.';
+    wkCard.appendChild(cn);
+  }
   wrap.appendChild(wkCard);
 
   /* ---- standing items (any day) ---- */
   const stCard = document.createElement('section'); stCard.className='pcard';
-  stCard.innerHTML = '<h3>Standing — anytime this week</h3>';
-  WORK_STANDING.forEach((s,i)=> stCard.appendChild(workRow('WKST|'+i, s, false, 'WKST-T|'+i)));
+  const sh = document.createElement('h3');
+  sh.innerHTML = '<span>Standing — anytime this week</span>';
+  stCard.appendChild(sh);
+  workstanding.forEach((s,i)=>{
+    const r = workRow('WKST|'+s.id, s.t, false, 'WKST-T|'+s.id);
+    if (workEdit) r.appendChild(editTools({
+      up: ()=>{ workstanding.splice(i-1,0,workstanding.splice(i,1)[0]); saveWorkStanding(); renderWork(); }, upOff: i===0,
+      down: ()=>{ workstanding.splice(i+1,0,workstanding.splice(i,1)[0]); saveWorkStanding(); renderWork(); }, downOff: i===workstanding.length-1,
+      rename: ()=>{ const v=prompt('Rename:', s.t); if (v && v.trim()){ s.t=v.trim(); saveWorkStanding(); renderWork(); } },
+      del: ()=>{ if (!confirm('Delete "'+s.t+'"?')) return;
+        delete state['WKST|'+s.id]; delete state['WKST-T|'+s.id];
+        workstanding.splice(i,1); save(); saveWorkStanding(); renderWork(); }
+    }));
+    stCard.appendChild(r);
+  });
+  if (workEdit){
+    const sr = document.createElement('div'); sr.className='wkaddrow';
+    const si = document.createElement('input'); si.type='text'; si.className='mealin';
+    si.placeholder = 'Add a standing item';
+    const sb = document.createElement('button'); sb.className='wbtn'; sb.textContent='Add';
+    function addStanding(){
+      const v = si.value.trim(); if (!v) return;
+      workstanding.push({ id:newWorkId(), t:v });
+      saveWorkStanding(); si.value=''; burstAt(sb,false); renderWork();
+    }
+    sb.onclick = addStanding;
+    si.onkeydown = e=>{ if (e.key === 'Enter') addStanding(); };
+    sr.appendChild(si); sr.appendChild(sb);
+    stCard.appendChild(sr);
+  }
   wrap.appendChild(stCard);
 
   const listCard = document.createElement('section'); listCard.className='pcard';
@@ -3169,10 +3426,16 @@ function renderWork(){
    day — there's no second copy of "done", so the two views can't drift. */
 function weekTaskRows(){
   const seen = {}, rows = [];
+  const today = DAYS[now.getDay()];
+  /* everyday habits first — one row each, ticking it marks today */
+  tasks.filter(t=>t.cad === 'daily').forEach(t=>{
+    seen[t.id] = true;
+    rows.push({ task:t, day:today, daily:true,
+      doneDays: DAYS.filter(d=>state[storeId(d, t.id)]).length });
+  });
   DAYS.forEach(dn=>{
     liveTasksOn(dn).forEach(t=>{
-      if (t.cad === 'daily') return;      /* daily chores repeat every day; no single day to move */
-      if (seen[t.id]) return;
+      if (t.cad === 'daily' || seen[t.id]) return;
       seen[t.id] = true;
       rows.push({ task:t, day:dn });
     });
@@ -3233,12 +3496,23 @@ function renderRogue(){
       };
       const nm = document.createElement('span'); nm.className='rgn'; nm.textContent = r.task.label;
       const dp = document.createElement('span'); dp.className='rgd';
-      dp.textContent = r.day;
-      dp.title = 'Scheduled for ' + DAY_FULL[r.day];
       row.appendChild(cb); row.appendChild(nm);
-      if (r.task.cad !== 'weekly'){
-        const tg = document.createElement('span'); tg.className='rgt'; tg.textContent = r.task.cad;
-        row.appendChild(tg);
+      if (r.daily){
+        /* an everyday habit — show how much of the week it's had, tick marks today */
+        const cnt = document.createElement('span');
+        cnt.className = 'rgt' + (r.doneDays === 7 ? ' full' : '');
+        cnt.textContent = r.doneDays + '/7';
+        cnt.title = r.doneDays + ' of 7 days done this week';
+        row.appendChild(cnt);
+        dp.textContent = 'today';
+        dp.title = 'Everyday habit — this ticks off ' + DAY_FULL[r.day];
+      } else {
+        if (r.task.cad !== 'weekly'){
+          const tg = document.createElement('span'); tg.className='rgt'; tg.textContent = r.task.cad;
+          row.appendChild(tg);
+        }
+        dp.textContent = r.day;
+        dp.title = 'Scheduled for ' + DAY_FULL[r.day];
       }
       row.appendChild(dp);
       card.appendChild(row);
@@ -3248,7 +3522,7 @@ function renderRogue(){
 
   const foot = document.createElement('div'); foot.className='exnote';
   foot.style.textAlign='center';
-  foot.textContent = 'Everyday habits aren’t listed here — they repeat daily, so they live on the Week tab.';
+  foot.textContent = 'Everyday habits show a ×/7 for the week; ticking one here marks today.';
   wrap.appendChild(foot);
 }
 
