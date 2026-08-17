@@ -45,15 +45,13 @@
     justify-content:center; font-size:0.82rem; font-weight:800; }
   .ringtxt .big { font-size:0.92rem; font-weight:700; }
   .ringtxt .small { font-size:0.74rem; opacity:.75; margin-top:2px; }
-  .kcount { display:inline-block; margin-top:10px; font-size:0.68rem; font-weight:600;
-    background:rgba(255,255,255,.14); padding:4px 11px; border-radius:20px; }
 
   /* ---------- tabs ---------- */
   .tabs { display:flex; gap:4px; margin:16px 0 12px; background:#eee5f2;
     padding:4px; border-radius:12px; }
-  .tabs button { flex:1; padding:9px 2px; border:none; border-radius:9px;
-    background:none; font-size:0.76rem; font-weight:700; color:var(--muted);
-    cursor:pointer; transition:all .18s; }
+  .tabs button { flex:1; padding:9px 1px; border:none; border-radius:9px;
+    background:none; font-size:0.7rem; font-weight:700; color:var(--muted);
+    cursor:pointer; transition:all .18s; white-space:nowrap; }
   .tabs button.on { background:#fff; color:var(--accent); box-shadow:0 1px 3px rgba(0,0,0,.07); }
 
   .toggle { display:flex; gap:6px; margin:0 0 12px; }
@@ -166,6 +164,39 @@
   .srow select.zsel:focus { outline:none; border-color:var(--accent); }
   .srow select.cadsel { font-weight:700; color:var(--accent); }
   .empty { color:var(--muted); font-size:0.8rem; padding:8px 0 12px; }
+  /* ---------- spaces ---------- */
+  .spaddrow { display:flex; gap:6px; align-items:center; }
+  .spaddrow .mealin { flex:1; min-width:0; }
+  .spday { font-family:inherit; font-size:0.76rem; font-weight:700; color:var(--accent);
+    background:var(--accent-soft); border:1px solid transparent; border-radius:9px;
+    padding:7px 6px; cursor:pointer; flex:none; max-width:118px; }
+  .spday:focus { outline:none; border-color:var(--accent); }
+  .spacecard { padding-top:2px; }
+  .sphead { display:flex; align-items:center; gap:8px; padding:12px 0 6px;
+    border-bottom:1px solid var(--line); margin-bottom:2px; }
+  .spname { font-size:1rem; font-weight:800; letter-spacing:-0.01em; cursor:pointer;
+    flex:none; max-width:42%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .spcount { margin-left:auto; font-size:0.68rem; color:var(--muted); font-weight:600; flex:none; }
+  .spwarn { font-size:0.7rem; color:#a3245a; background:#fbe9f0; border-radius:8px;
+    padding:6px 9px; margin:8px 0 2px; }
+  .sptaskadd { display:flex; gap:6px; padding:10px 0 6px; border-top:1px solid var(--line); }
+  .sptaskadd .mealin { flex:1; min-width:0; }
+  /* inside a space card the zone and day just echo the header, so keep them
+     quiet — they're controls for the exceptions, not labels */
+  .spacecard .srow select.zsel { background:none; color:var(--muted);
+    font-weight:600; max-width:104px; }
+  .spacecard .sctl select { color:var(--muted); }
+  .spacecard .sctl select.cadsel { color:var(--accent); }
+  .srow select.offday { border-color:var(--gold); color:var(--gold) !important;
+    background:var(--gold-soft); font-weight:700; }
+
+  /* day heading inside the Weekly group */
+  .daysub { display:flex; justify-content:space-between; align-items:baseline;
+    font-size:0.8rem; font-weight:700; color:var(--accent);
+    padding:12px 0 2px; border-top:1px solid var(--line); margin-top:4px; }
+  .daysub:first-of-type { border-top:none; margin-top:0; padding-top:6px; }
+  .daysub .dn { font-size:0.66rem; font-weight:600; color:var(--muted); }
+  .daysub + .srow { border-top:none; }
 
   .nncard { background:var(--card); border:1.5px solid #d8c3ea; border-radius:16px;
     padding:6px 15px 4px; margin-bottom:14px; box-shadow:var(--shadow); }
@@ -226,6 +257,15 @@
     font-size:0.75rem; line-height:1; padding:2px 4px; }
   .planctrl button:disabled { opacity:.25; cursor:default; }
   .planctrl button:active:not(:disabled) { color:var(--accent); }
+  .timerow { display:flex; align-items:center; gap:10px; padding:9px 0;
+    border-top:1px solid var(--line); }
+  .timerow:first-of-type { border-top:none; }
+  .timelbl { flex:1; font-size:0.84rem; line-height:1.3; }
+  .timein { flex:none; font-family:inherit; font-size:0.82rem; font-weight:700;
+    color:var(--accent); background:#fff; border:1px solid var(--line);
+    border-radius:9px; padding:6px 8px; }
+  .timein:focus { outline:none; border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-soft); }
   .milesrow { display:flex; align-items:center; gap:8px; padding:0 0 9px 42px; }
   .milesrow .mlbl { font-size:0.72rem; color:var(--muted); }
   .milesrow input { flex:none; width:64px; font-family:inherit; font-size:0.78rem; color:var(--ink);
@@ -380,15 +420,6 @@
     color:var(--muted); margin-top:3px; font-weight:700; }
   .sk .best { font-size:0.62rem; color:var(--muted); margin-top:2px; opacity:.85; }
 
-  /* ---------- transition banner ---------- */
-  .tbanner { border-radius:16px; padding:13px 15px; margin-bottom:14px; color:#fff;
-    background:linear-gradient(120deg,#22c9d8,#7c5cc4 60%,#e0457b);
-    box-shadow:var(--shadow); }
-  .tbanner .th { font-size:0.9rem; font-weight:800; }
-  .tbanner .tb { font-size:0.78rem; opacity:.92; margin-top:3px; line-height:1.45; }
-  .tbanner button { margin-top:10px; border:none; border-radius:9px;
-    background:rgba(255,255,255,.9); color:#7a2fb0; font-size:0.76rem; font-weight:700;
-    padding:7px 13px; cursor:pointer; }
 
   /* ---------- progress view ---------- */
   .metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
@@ -525,6 +556,39 @@
     width:20px; text-align:center; }
   .gtrow:active { background:var(--accent-soft); }
 
+  /* ---------- rogue mode ---------- */
+  .hero.h-rogue { background:linear-gradient(135deg,#0b8f6a 0%,#12a88a 50%,#1fbdd4 100%); }
+  .rgtotal { text-align:center; padding:16px 15px 14px; }
+  .rgtotal .rgnum { font-size:1.7rem; font-weight:800; color:var(--accent); line-height:1; }
+  .rgtotal .rglbl { font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em;
+    color:var(--muted); font-weight:700; margin-top:4px; }
+  .rgbar { height:6px; border-radius:4px; background:var(--line); margin-top:11px; overflow:hidden; }
+  .rgbar i { display:block; height:100%; border-radius:4px;
+    background:linear-gradient(90deg,#12b3c4,#7a2fb0); transition:width .35s; }
+  .rgzone h3 { display:flex; justify-content:space-between; align-items:baseline; }
+  .rgzone .rgc { font-size:0.68rem; font-weight:700; color:var(--muted);
+    letter-spacing:0; text-transform:none; }
+  .rgzone .rgc.all { color:#0f9d6b; }
+  .rgrow { display:flex; align-items:center; gap:10px; padding:10px 0;
+    border-top:1px solid var(--line); font-size:0.88rem; cursor:pointer; }
+  .rgrow:first-of-type { border-top:none; }
+  .rgrow input { appearance:none; -webkit-appearance:none; flex:none; width:21px; height:21px;
+    border:2px solid #c9bed3; border-radius:7px; cursor:pointer; position:relative;
+    transition:all .18s; }
+  .rgrow input:active { transform:scale(.88); }
+  .rgrow input:checked { background:var(--accent); border-color:var(--accent); }
+  .rgrow input:checked::after { content:""; position:absolute; left:6px; top:2px; width:5px;
+    height:10px; border:solid #fff; border-width:0 2.5px 2.5px 0; transform:rotate(45deg); }
+  .rgrow .rgn { flex:1; line-height:1.35; }
+  .rgrow.done .rgn { color:var(--muted); text-decoration:line-through; opacity:.6; }
+  .rgrow .rgt { flex:none; font-size:0.58rem; font-weight:700; text-transform:uppercase;
+    letter-spacing:0.05em; color:var(--accent); background:var(--accent-soft);
+    border-radius:8px; padding:2px 7px; }
+  .rgrow .rgd { flex:none; font-size:0.66rem; font-weight:700; color:var(--muted);
+    background:var(--bg); border:1px solid var(--line); border-radius:999px;
+    padding:2px 8px; min-width:38px; text-align:center; }
+  .rgrow.done .rgd { opacity:.5; }
+
   .done-msg { text-align:center; font-size:0.9rem; color:var(--accent); font-weight:800;
     padding:16px; background:var(--accent-soft); border-radius:16px;
     margin-bottom:11px; display:none; animation:rise .4s cubic-bezier(.2,1.2,.4,1); }
@@ -560,12 +624,12 @@
       <div class="small" id="ringSmall"></div>
     </div>
   </div>
-  <span class="kcount" id="kcount"></span>
 </div>
 
 <div class="tabs">
   <button id="tabWeek">Week</button>
   <button id="tabPlan">Plan</button>
+  <button id="tabRogue">Rogue</button>
   <button id="tabAll">Tasks</button>
   <button id="tabProg">Stats</button>
   <button id="tabFood">Food</button>
@@ -585,11 +649,6 @@
 </div>
 
 <div id="weekView">
-  <div id="transition"></div>
-  <div class="toggle">
-    <button id="vNow">Summer (now)</button>
-    <button id="vSchool">School year (Aug 20)</button>
-  </div>
   <div class="days" id="dayTabs"></div>
   <div class="done-msg" id="doneMsg">Day complete. Everything got done.</div>
   <div id="buckets"></div>
@@ -599,48 +658,9 @@
 <div id="foodView" style="display:none"></div>
 <div id="planView" style="display:none"></div>
 <div id="workView" style="display:none"></div>
+<div id="rogueView" style="display:none"></div>
 
 <div id="allView" style="display:none">
-  <div class="addform">
-    <h3>Add a task</h3>
-    <input type="text" id="newLabel" placeholder="What needs doing?">
-    <div class="frow">
-      <select id="newCad">
-        <option value="weekly">Weekly</option>
-        <option value="monthly">Monthly</option>
-        <option value="quarterly">Quarterly</option>
-        <option value="annual">Annual</option>
-        <option value="daily">Every day</option>
-        <option value="once">One-time</option>
-      </select>
-      <select id="newBucket">
-        <option>Home</option><option>Kitchen</option><option>Living Area</option>
-        <option>Bedrooms</option><option>Bathrooms</option><option>Entrance</option>
-        <option>Grocery</option><option>Misc</option>
-        <option>Morning</option><option>Work Day</option><option>Evening</option>
-      </select>
-    </div>
-    <div class="frow">
-      <select id="newDay">
-        <option value="auto">Auto-schedule</option>
-        <option>Mon</option><option>Tue</option><option>Wed</option><option>Thu</option>
-        <option>Fri</option><option>Sat</option><option>Sun</option>
-      </select>
-      <select id="newWeek" style="display:none">
-        <option value="auto">Any week</option>
-        <option value="1">Week 1</option><option value="2">Week 2</option>
-        <option value="3">Week 3</option><option value="4">Week 4</option>
-      </select>
-      <select id="newMonth" style="display:none">
-        <option value="0">Jan</option><option value="1">Feb</option><option value="2">Mar</option>
-        <option value="3">Apr</option><option value="4">May</option><option value="5">Jun</option>
-        <option value="6">Jul</option><option value="7">Aug</option><option value="8">Sep</option>
-        <option value="9">Oct</option><option value="10">Nov</option><option value="11">Dec</option>
-      </select>
-      <input type="date" id="newDate" style="display:none">
-    </div>
-    <button class="go" id="addBtn">Add + schedule it</button>
-  </div>
   <div id="schedList"></div>
 </div>
 
@@ -652,11 +672,11 @@
 
 
 <script>
-const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const DAY_FULL = {Mon:'Monday',Tue:'Tuesday',Wed:'Wednesday',Thu:'Thursday',Fri:'Friday',Sat:'Saturday',Sun:'Sunday'};
 const QMONTHS = [0,3,6,9];
 const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const BUCKETS = ['Home','Kitchen','Living Area','Bedrooms','Bathrooms','Entrance',
+const BUCKET_SEED = ['Home','Kitchen','Living Area','Bedrooms','Bathrooms','Entrance',
   'Grocery','Misc','Morning','Work Day','Evening'];
 const CADENCES = [['daily','Every day'],['weekly','Weekly'],['monthly','Monthly'],
   ['quarterly','Quarterly'],['annual','Annual'],['once','One-time']];
@@ -835,8 +855,88 @@ localStorage.setItem('mwl-seeded', JSON.stringify(seeded));
 localStorage.setItem('mwl-tasklist', JSON.stringify(tasks));
 function saveTasks(){ localStorage.setItem('mwl-tasklist', JSON.stringify(tasks)); }
 
+/* ================= spaces =================
+   A space is a room or area with a day of the week attached. Tasks added to a
+   space inherit that day, so you set "Kitchen = Monday" once instead of
+   picking Monday on every kitchen task. */
+let spaces = null;
+try { spaces = JSON.parse(localStorage.getItem('mwl-spaces') || 'null'); } catch(e){ spaces = null; }
+function saveSpaces(){ localStorage.setItem('mwl-spaces', JSON.stringify(spaces)); }
+function newSpaceId(){ return 'sp' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+if (!Array.isArray(spaces) || !spaces.length){
+  /* first run: build spaces out of the zones already in use, giving each the
+     day most of its tasks already sit on */
+  const byZone = {};
+  tasks.forEach(t=>{ if (t.bucket) (byZone[t.bucket] = byZone[t.bucket] || []).push(t); });
+  const names = BUCKET_SEED.filter(n=>byZone[n])
+    .concat(Object.keys(byZone).filter(n=>BUCKET_SEED.indexOf(n) === -1));
+  spaces = names.map(n=>{
+    const tally = {};
+    byZone[n].forEach(t=>{ if (t.day) tally[t.day] = (tally[t.day]||0) + 1; });
+    let day = 'Mon', best = 0;
+    Object.keys(tally).forEach(d=>{ if (tally[d] > best){ best = tally[d]; day = d; } });
+    return { id:newSpaceId(), name:n, day:day };
+  });
+  if (!spaces.length) spaces = [{ id:newSpaceId(), name:'Home', day:'Mon' }];
+  saveSpaces();
+}
+function spaceNames(){ return spaces.map(s=>s.name); }
+function spaceByName(n){ return spaces.filter(s=>s.name === n)[0] || null; }
+function tasksInSpace(name){ return tasks.filter(t=>t.bucket === name); }
+function orphanTasks(){
+  const known = spaceNames();
+  return tasks.filter(t=>known.indexOf(t.bucket) === -1);
+}
+/* Moving a space moves the tasks that were following it, and leaves alone any
+   you'd deliberately set to a different day. */
+function setSpaceDay(sp, day){
+  const wasFollowing = tasksInSpace(sp.name).filter(t=>t.day === sp.day);
+  sp.day = day;
+  wasFollowing.forEach(t=>{ if (t.cad !== 'daily' && t.cad !== 'once') t.day = day; });
+  saveSpaces(); saveTasks(); render();
+}
+function renameSpace(sp, name){
+  const old = sp.name;
+  sp.name = name;
+  tasks.forEach(t=>{ if (t.bucket === old) t.bucket = name; });
+  saveSpaces(); saveTasks(); render();
+}
+
 /* ================= fixed rhythm ================= */
-function fixedPlan(day, version){
+/* ================= the clock =================
+   Times live in one place so the routine reads from settings instead of
+   hardcoded text. Edited on the Plan tab. */
+const TIME_DEFAULTS = {
+  wake:'05:00', block:'05:30', devotional:'06:00', workout:'06:00',
+  james:'06:30', kids:'07:00', leave:'07:20',
+  dinner:'18:00', bath:'19:00', kidsbed:'20:00', mybed:'21:15'
+};
+const TIME_FIELDS = [
+  ['wake',      'You wake'],
+  ['block',     'Laundry / bed / caffeine until'],
+  ['devotional','Devotional until'],
+  ['workout',   'Workout'],
+  ['james',     'Wake James'],
+  ['kids',      'Wake Bennett & Emma'],
+  ['leave',     'Leave for dropoff'],
+  ['dinner',    'Dinner on the table'],
+  ['bath',      'Bathtime'],
+  ['kidsbed',   'Kids down'],
+  ['mybed',     'You in bed']
+];
+let times = {};
+try { times = JSON.parse(localStorage.getItem('mwl-times') || '{}'); } catch(e){ times = {}; }
+function saveTimes(){ localStorage.setItem('mwl-times', JSON.stringify(times)); }
+function tRaw(k){ return times[k] || TIME_DEFAULTS[k] || ''; }
+/* "05:00" -> "5:00", "18:00" -> "6:00" — am/pm is obvious from context */
+function tf(k){
+  const v = tRaw(k), p = v.split(':');
+  if (p.length !== 2) return v;
+  const h = parseInt(p[0],10);
+  return ((h % 12) === 0 ? 12 : h % 12) + ':' + p[1];
+}
+
+function fixedPlan(day){
   if (day === 'Sat') return {
     Morning: { time:'flex', items:[
       ['Wake by 6:30 — keep the rhythm, gently', false],
@@ -851,7 +951,7 @@ function fixedPlan(day, version){
     Evening: { time:'wind down', items:[
       ['Kid time — something they pick', true],
       ['Kitchen reset', false],
-      ['In bed by 9:30', false]
+      ['In bed by 9:30', false, 'bed']
     ]}
   };
   if (day === 'Sun'){
@@ -859,8 +959,8 @@ function fixedPlan(day, version){
       ['Kid time — something they pick', true],
       ['Kitchen reset', false]
     ];
-    if (version === 'school') evening.push(['Pack backpack + lunch for Monday', true]);
-    evening.push(['In bed by 9:15 — Monday’s workout starts tonight', true]);
+    evening.push(['Pack backpack + lunch for Monday', true]);
+    evening.push(['In bed by 9:15 — Monday’s workout starts tonight', true, 'bed']);
     return {
       Morning: { time:'flex', items:[
         ['Wake by 6:30', false],
@@ -876,22 +976,19 @@ function fixedPlan(day, version){
       Evening: { time:'wind down', items: evening }
     };
   }
-  const morning = version === 'now' ? [
-    ['Wake 5:00 — feet on floor, no snooze', true],
+  const morning = [
+    ['Wake '+tf('wake')+' — feet on floor, no snooze', true, 'wake'],
+    ['Fold a load of laundry', false],
+    ['Make the bed', false],
+    ['Caffeine', false],
     ['Devotional', false],
     ['Workout', true, 'workout'],
-    ['Start a load of laundry', false],
-    ['Wrapped up by 7:00 — kids up 7:30–8:00', false]
-  ] : [
-    ['Wake 5:00 — feet on floor, no snooze', true],
-    ['Devotional', false],
-    ['Workout', true, 'workout'],
-    ['Start a load of laundry', false],
-    ['6:45 — kids up, breakfast, dressed', false],
-    ['7:05 — out the door (school by 7:25)', true]
+    ['Wake James — '+tf('james'), false],
+    ['Wake Bennett & Emma — '+tf('kids'), false],
+    ['Out the door for dropoff — '+tf('leave'), true]
   ];
   return {
-    Morning: { time: version==='now' ? '5:00 – 7:00' : '5:00 – 7:25', items: morning },
+    Morning: { time: tf('wake')+' – '+tf('leave'), items: morning },
     'Work Day': { time:'9:00 – 4/5', items:[
       ['', false, 'steps'],
       ['Lunch break: dinner prep (chop, marinate, or crockpot on)', true],
@@ -902,30 +999,68 @@ function fixedPlan(day, version){
       ['Fold + put away — one basket, same day', false],
       ['10-min toy pickup with the kids (~5:30)', false]
     ]},
-    Evening: { time:'6:00 – 9:15', items:[
-      ['Dinner on the table at 6:00', false, 'meal'],
+    Evening: { time: tf('dinner')+' – '+tf('mybed'), items:[
+      ['Dinner on the table at '+tf('dinner'), false, 'meal'],
       ['Kid time — 20 minutes, undivided, after dinner', true],
-      ['7:00 bedtime routine — kids down by 8:00', false],
+      ['Bathtime — '+tf('bath'), false],
+      ['Kids down by '+tf('kidsbed'), false],
       ['Kitchen reset + dishwasher running', false],
       ['Lay out workout clothes + tomorrow’s top 3', false],
-      ['In bed by 9:15 — this protects tomorrow’s workout', true]
+      ['In bed by '+tf('mybed')+' — this protects tomorrow’s workout', true, 'bed']
     ]}
   };
 }
 
 /* ================= dates ================= */
-function mondayOf(d){
-  const x = new Date(d); const dow = (x.getDay()+6)%7;
-  x.setDate(x.getDate()-dow); x.setHours(0,0,0,0); return x;
+/* the week runs Sunday → Saturday */
+function weekStartOf(d){
+  const x = new Date(d);
+  x.setDate(x.getDate() - x.getDay());   /* getDay(): 0 = Sunday */
+  x.setHours(0,0,0,0); return x;
 }
 const now = new Date();
-const monday = mondayOf(now);
-const weekKey = 'mwl-' + monday.toISOString().slice(0,10);
-function dateFor(dn){ const d = new Date(monday); d.setDate(d.getDate()+DAYS.indexOf(dn)); return d; }
+const weekStart = weekStartOf(now);
+const weekKey = 'mwl-' + weekStart.toISOString().slice(0,10);
+/* The week used to start on Monday, so this week's checkmarks sit under a
+   different key. Carry over only the days that fall on the SAME actual date
+   under both schemes — otherwise a Sunday changeover would drag last Monday's
+   ticks onto next Monday. */
+(function(){
+  if (localStorage.getItem(weekKey)) return;
+  const oldStart = new Date(now);
+  oldStart.setDate(oldStart.getDate() - ((oldStart.getDay()+6)%7));
+  oldStart.setHours(0,0,0,0);
+  const oldKey = 'mwl-' + oldStart.toISOString().slice(0,10);
+  let prev = null;
+  try { prev = JSON.parse(localStorage.getItem(oldKey) || 'null'); } catch(e){}
+  if (!prev || typeof prev !== 'object') return;
+  const OLD_DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const sameDate = {};
+  DAYS.forEach(dn=>{
+    const o = new Date(oldStart); o.setDate(o.getDate() + OLD_DAYS.indexOf(dn));
+    const n = new Date(weekStart); n.setDate(n.getDate() + DAYS.indexOf(dn));
+    sameDate[dn] = o.getTime() === n.getTime();
+  });
+  const dayOf = k=>{
+    const p = String(k).split('|');
+    if (p[0] === 'ANCH') return p[2];
+    if (p[0] === 'T' || p[0] === 'wnote') return p[1];
+    if (p.length === 3) return p[0];        /* Day|Bucket|index */
+    if (p.length === 4) return p[1];        /* legacy mode|Day|Bucket|index */
+    return null;                            /* week-wide, e.g. EXW */
+  };
+  const carried = {};
+  Object.keys(prev).forEach(k=>{
+    const dn = dayOf(k);
+    if (dn === null || sameDate[dn]) carried[k] = prev[k];
+  });
+  localStorage.setItem(weekKey, JSON.stringify(carried));
+})();
+function dateFor(dn){ const d = new Date(weekStart); d.setDate(d.getDate()+DAYS.indexOf(dn)); return d; }
 function wom(d){ return Math.floor((d.getDate()-1)/7)+1; }
 function ymd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function occursOn(t, d){
-  const dn = DAYS[(d.getDay()+6)%7];
+  const dn = DAYS[d.getDay()];
   if (t.cad === 'daily') return true;
   if (t.cad === 'once') return t.date === ymd(d);
   if (t.day !== dn) return false;
@@ -972,31 +1107,28 @@ function changeCadence(t, cad){
 /* ================= state ================= */
 let state = {};
 try { state = JSON.parse(localStorage.getItem(weekKey) || '{}'); } catch(e){ state = {}; }
-/* Summer vs school rhythm.
-   The stored choice is remembered alongside the "era" it was made in, so the
-   app flips itself over on Aug 20 instead of silently leaving you on the
-   summer plan — while any deliberate override you make afterwards sticks. */
-const SCHOOL_START = new Date(2026,7,20);
-const dateVersion = now >= SCHOOL_START ? 'school' : 'now';
-let version;
+/* There's one rhythm now — no summer/school switch. Routine checkboxes and
+   pinned non-negotiables used to be filed under the active mode, so strip that
+   prefix off anything already saved rather than orphaning it. */
 (function(){
-  const stored = localStorage.getItem('mwl-version');
-  const era = localStorage.getItem('mwl-version-era');
-  if (stored && era === dateVersion){ version = stored; return; }
-  version = dateVersion;
-  localStorage.setItem('mwl-version', version);
-  localStorage.setItem('mwl-version-era', dateVersion);
+  const was = localStorage.getItem('mwl-version') || 'school';
+  let touched = false;
+  Object.keys(state).forEach(k=>{
+    const p = k.split('|');
+    if (p.length === 4 && (p[0] === 'now' || p[0] === 'school')){
+      if (p[0] === was && state[k] && state[p.slice(1).join('|')] === undefined){
+        state[p.slice(1).join('|')] = state[k];
+      }
+      delete state[k]; touched = true;
+    }
+  });
+  if (touched) save();
+  ['mwl-version','mwl-version-era'].forEach(k=>{ try { localStorage.removeItem(k); } catch(e){} });
 })();
-function setVersion(v){
-  version = v;
-  localStorage.setItem('mwl-version', v);
-  localStorage.setItem('mwl-version-era', dateVersion);
-  render();
-}
 let stepsPerMile = +localStorage.getItem('mwl-stepspermile') || 2318;
 let view = localStorage.getItem('mwl-view') || 'week';
 let lastRenderedView = null;
-let selDay = DAYS[(now.getDay()+6)%7];
+let selDay = DAYS[now.getDay()];
 
 function save(){ localStorage.setItem(weekKey, JSON.stringify(state)); }
 
@@ -1013,25 +1145,19 @@ function setMiles(dn, v){
   saveMiles();
 }
 
-/* anchor tracking (workout/wake/bed) — kept independent of the Summer/School
-   toggle so switching versions never disconnects streak history from the
-   checkboxes already ticked this week. */
+/* Workout / wake / bed are tracked by their own keys rather than by a routine
+   row's position, so streaks survive the routine being edited or reset. */
 function anchorKey(kind, day){ return 'ANCH|'+kind+'|'+day; }
 if (!localStorage.getItem('mwl-anchmig-v1')){
-  ['now','school'].forEach(ver=>{
-    DAYS.forEach(dn=>{
-      const plan = fixedPlan(dn, ver);
-      for (const b in plan){
-        plan[b].items.forEach((it,i)=>{
-          if (!state[ver+'|'+dn+'|'+b+'|'+i]) return;
-          if (it[2] === 'workout') state[anchorKey('workout',dn)] = true;
-          if (typeof it[0] === 'string'){
-            if (it[0].indexOf('Wake 5:00') === 0) state[anchorKey('wake',dn)] = true;
-            if (it[0].indexOf('In bed') === 0) state[anchorKey('bed',dn)] = true;
-          }
-        });
-      }
-    });
+  DAYS.forEach(dn=>{
+    const plan = fixedPlan(dn);
+    for (const b in plan){
+      plan[b].items.forEach((it,i)=>{
+        if (!state[fixedId(dn,b,i)]) return;
+        if (it[2] === 'workout' || it[2] === 'wake' || it[2] === 'bed')
+          state[anchorKey(it[2], dn)] = true;
+      });
+    }
   });
   save();
   localStorage.setItem('mwl-anchmig-v1','1');
@@ -1052,7 +1178,20 @@ if (!localStorage.getItem('mwl-milesmig-v1')){
 /* non-negotiables: up to 5 per day, persist across weeks */
 let nn = {};
 try { nn = JSON.parse(localStorage.getItem('mwl-nn') || '{}'); } catch(e){ nn = {}; }
-function nnKey(day){ return version + '|' + day; }
+/* pins were filed per mode too — fold them down to just the day */
+(function(){
+  let touched = false;
+  ['now','school'].forEach(ver=>{
+    DAYS.forEach(dn=>{
+      const old = ver+'|'+dn;
+      if (!nn[old]) return;
+      if (!nn[dn] || !nn[dn].length) nn[dn] = nn[old];
+      delete nn[old]; touched = true;
+    });
+  });
+  if (touched) localStorage.setItem('mwl-nn', JSON.stringify(nn));
+})();
+function nnKey(day){ return day; }
 function nnList(day){ return nn[nnKey(day)] || []; }
 function nnHas(day, rk){ return nnList(day).indexOf(rk) !== -1; }
 function nnToggle(day, rk){
@@ -1063,7 +1202,7 @@ function nnToggle(day, rk){
   nn[k] = list; localStorage.setItem('mwl-nn', JSON.stringify(nn));
   return true;
 }
-function fixedId(d,b,i){ return version+'|'+d+'|'+b+'|'+i; }
+function fixedId(d,b,i){ return d+'|'+b+'|'+i; }
 function storeId(d,t){ return 'T|'+d+'|'+t; }
 function noteId(d){ return 'wnote|'+d; }
 
@@ -1133,7 +1272,7 @@ function setMeal(d,v){ meals[d]=v; localStorage.setItem('mwl-meals', JSON.string
 function getWorkout(d){ return workouts[d] || ''; }
 
 function dayProgress(day){
-  const plan = fixedPlan(day, version);
+  const plan = fixedPlan(day);
   let total=0, done=0;
   for (const b in plan){ plan[b].items.forEach((_,i)=>{ total++; if (state[fixedId(day,b,i)]) done++; }); }
   liveTasksOn(day).forEach(t=>{ total++; if (state[storeId(day,t.id)]) done++; });
@@ -1145,7 +1284,7 @@ function dayProgress(day){
 let history = {};
 try { history = JSON.parse(localStorage.getItem('mwl-history') || '{}'); } catch(e){ history = {}; }
 function ymdToDate(s){ const a=s.split('-').map(Number); return new Date(a[0],a[1]-1,a[2]); }
-function dowKey(d){ return DAYS[(d.getDay()+6)%7]; }
+function dowKey(d){ return DAYS[d.getDay()]; }
 
 function dayFacts(day){
   return {
@@ -1163,7 +1302,7 @@ function snapshotToday(){
   // it wipes the boxes for a fresh week without erasing the streak behind them.
   const today = new Date(now); today.setHours(0,0,0,0);
   DAYS.forEach((wd,idx)=>{
-    const d = new Date(monday); d.setDate(d.getDate()+idx); d.setHours(0,0,0,0);
+    const d = new Date(weekStart); d.setDate(d.getDate()+idx); d.setHours(0,0,0,0);
     if (d > today) return;
     const f = dayFacts(wd);
     const p = dayProgress(wd);
@@ -1228,7 +1367,7 @@ function bestDayPct(){
 }
 function weeksTracked(){
   const set = new Set();
-  Object.keys(history).forEach(k=> set.add(ymd(mondayOf(ymdToDate(k)))));
+  Object.keys(history).forEach(k=> set.add(ymd(weekStartOf(ymdToDate(k)))));
   return set.size;
 }
 function weekProgress(){
@@ -1238,53 +1377,6 @@ function weekProgress(){
 }
 
 /* ================= week view ================= */
-function daysToK(){ return Math.ceil((SCHOOL_START - now)/86400000); }
-function renderTransition(){
-  const el = document.getElementById('transition'); el.innerHTML = '';
-  const k = daysToK();
-
-  /* If the calendar and the active rhythm disagree, say so — this is what
-     used to leave you on the summer plan all through September. */
-  if (version !== dateVersion){
-    const div = document.createElement('div'); div.className='tbanner';
-    const onSummerInSchool = dateVersion === 'school';
-    div.innerHTML = '<div class="th">' +
-      (onSummerInSchool ? 'School’s in — you’re on the summer rhythm' : 'It’s still summer — you’re on the school rhythm') +
-      '</div><div class="tb">' +
-      (onSummerInSchool
-        ? 'Your checklist still says kids up 7:30–8:00. Switch over for the 7:05 out-the-door morning.'
-        : 'You’re test-driving the school-year plan early. Switch back any time.') +
-      '</div>';
-    const btn = document.createElement('button');
-    btn.textContent = onSummerInSchool ? 'Switch to school schedule' : 'Back to summer schedule';
-    btn.onclick = ()=> setVersion(dateVersion);
-    div.appendChild(btn);
-    el.appendChild(div);
-    return;
-  }
-
-  if (k <= 0 || k > 30) return;
-  let head, body;
-  if (k <= 7){
-    head = 'Trial week — ' + k + ' day' + (k===1?'':'s') + ' to kindergarten';
-    body = 'Run the real thing now: 5:00 wake, out the door by 7:25. Better to hit the friction this week than on day one.';
-  } else if (k <= 14){
-    head = 'Two-week warning — ' + k + ' days to kindergarten';
-    body = 'Start test-driving the 7:25 departure a couple mornings this week so it’s muscle memory by Aug 20.';
-  } else {
-    head = 'Kindergarten in ' + k + ' days';
-    body = 'Begin easing bedtime and wake earlier now — small shifts beat one hard reset on Aug 20.';
-  }
-  const div = document.createElement('div'); div.className='tbanner';
-  div.innerHTML = '<div class="th">'+head+'</div><div class="tb">'+body+'</div>';
-  if (version !== 'school'){
-    const btn = document.createElement('button');
-    btn.textContent = 'Switch to school schedule';
-    btn.onclick = ()=> setVersion('school');
-    div.appendChild(btn);
-  }
-  el.appendChild(div);
-}
 function streakCard(){
   const defs = [['workout','Workout','&#128293;'],['wake','5am wake','&#9200;'],['bed','9:15 bed','&#127772;']];
   const sec = document.createElement('section'); sec.className='streaks';
@@ -1351,12 +1443,8 @@ function extraRow(day, idx, inCard){
   return row;
 }
 function renderWeek(){
-  document.getElementById('vNow').className = version==='now' ? 'on' : '';
-  document.getElementById('vSchool').className = version==='school' ? 'on' : '';
-  renderTransition();
-
   const tabs = document.getElementById('dayTabs'); tabs.innerHTML = '';
-  const todayKey = DAYS[(now.getDay()+6)%7];
+  const todayKey = DAYS[now.getDay()];
   DAYS.forEach(d=>{
     const p = dayProgress(d);
     const pc = p.total ? 100*p.done/p.total : 0;
@@ -1367,7 +1455,7 @@ function renderWeek(){
     tabs.appendChild(b);
   });
 
-  const plan = fixedPlan(selDay, version);
+  const plan = fixedPlan(selDay);
   const dayTasks = liveTasksOn(selDay);
   const names = Object.keys(plan);
   dayTasks.forEach(t=>{ if (!names.includes(t.bucket)) names.push(t.bucket); });
@@ -1457,10 +1545,8 @@ function makeRow(item, inCard){
     const before = dayProgress(selDay);
     const wasFull = before.total && before.done===before.total;
     state[id] = cb.checked; if (!cb.checked) delete state[id];
-    let ak = null;
-    if (special === 'workout') ak = anchorKey('workout', selDay);
-    else if (typeof text === 'string' && text.indexOf('Wake 5:00') === 0) ak = anchorKey('wake', selDay);
-    else if (typeof text === 'string' && text.indexOf('In bed') === 0) ak = anchorKey('bed', selDay);
+    const ak = (special === 'workout' || special === 'wake' || special === 'bed')
+      ? anchorKey(special, selDay) : null;
     if (ak){ if (cb.checked) state[ak] = true; else delete state[ak]; }
     save();
     if (cb.checked){
@@ -1581,112 +1667,224 @@ function attachLongPress(el, cb){
 /* ================= all tasks ================= */
 function renderAll(){
   const wrap = document.getElementById('schedList'); wrap.innerHTML = '';
-  const tip = document.createElement('div'); tip.className='exnote'; tip.style.padding='0 2px 8px';
-  tip.textContent = 'Long-press a name to rename it. The pill on the right is its zone, and "how often" swaps a task between weekly, monthly, quarterly and annual without redoing it.';
+
+  const tip = document.createElement('div'); tip.className='exnote';
+  tip.style.padding = '0 2px 10px';
+  tip.textContent = 'Give each space a day, then add its tasks underneath — they pick up that day automatically. Move a space to another day and its tasks follow.';
   wrap.appendChild(tip);
-  const groups = [
-    ['daily','Every day',''],
-    ['weekly','Weekly','pick the day'],
-    ['monthly','Monthly','day + week of month'],
-    ['quarterly','Quarterly','Jan · Apr · Jul · Oct'],
-    ['annual','Annual','one per month'],
-    ['once','One-time','']
-  ];
-  groups.forEach(([cad,title,hint])=>{
-    const list = tasks.filter(t=>t.cad===cad);
-    if (!list.length && (cad==='daily'||cad==='once'||cad==='quarterly')) return;
-    const sec = document.createElement('section'); sec.className='sched';
-    const h = document.createElement('h2');
-    h.innerHTML = title + (hint ? '<span class="hint">'+hint+'</span>' : '');
-    sec.appendChild(h);
+
+  /* ---------- add a space ---------- */
+  const addCard = document.createElement('section'); addCard.className='pcard';
+  addCard.innerHTML = '<h3>Add a space</h3>';
+  const arow = document.createElement('div'); arow.className='spaddrow';
+  const nameIn = document.createElement('input'); nameIn.type='text';
+  nameIn.className='mealin'; nameIn.placeholder='Garage, Office, Porch…';
+  const daySel = document.createElement('select'); daySel.className='spday';
+  DAYS.forEach(dn=>{ const o=document.createElement('option'); o.value=dn;
+    o.textContent=DAY_FULL[dn]; daySel.appendChild(o); });
+  daySel.value = DAYS[now.getDay()];
+  const addBtn = document.createElement('button'); addBtn.className='wbtn'; addBtn.textContent='Add';
+  function addSpace(){
+    const n = nameIn.value.trim(); if (!n) return;
+    if (spaceByName(n)){ alert('You already have a space called ' + n + '.'); return; }
+    spaces.push({ id:newSpaceId(), name:n, day:daySel.value });
+    saveSpaces(); nameIn.value=''; burstAt(addBtn,false); render();
+  }
+  addBtn.onclick = addSpace;
+  nameIn.onkeydown = e=>{ if (e.key === 'Enter') addSpace(); };
+  arow.appendChild(nameIn); arow.appendChild(daySel); arow.appendChild(addBtn);
+  addCard.appendChild(arow);
+  wrap.appendChild(addCard);
+
+  /* ---------- one card per space ---------- */
+  const di = t => { const i = DAYS.indexOf(t.day); return i === -1 ? 99 : i; };
+  const cadRank = { daily:0, weekly:1, monthly:2, quarterly:3, annual:4, once:5 };
+
+  function buildTaskRow(t, sp){
+    const row = document.createElement('div'); row.className='srow';
+
+    const top = document.createElement('div'); top.className='stop';
+    const lbl = document.createElement('span'); lbl.className='lbl';
+    lbl.textContent = t.label; lbl.title='Long-press to rename'; lbl.style.cursor='pointer';
+    attachLongPress(lbl, ()=>{ const v=prompt('Rename task:', t.label);
+      if (v!==null && v.trim()){ t.label=v.trim(); saveTasks(); render(); } });
+    top.appendChild(lbl);
+
+    /* move it to a different space */
+    const zs = document.createElement('select'); zs.className='zsel';
+    zs.title = 'Move to another space';
+    spaceNames().forEach(n=>{ const o=document.createElement('option'); o.textContent=n;
+      if (n===t.bucket) o.selected=true; zs.appendChild(o); });
+    if (!spaceByName(t.bucket)){
+      const o=document.createElement('option'); o.textContent=t.bucket||'—';
+      o.selected=true; zs.insertBefore(o, zs.firstChild);
+    }
+    zs.onchange = ()=>{
+      t.bucket = zs.value;
+      const dest = spaceByName(zs.value);
+      if (dest && t.cad !== 'daily' && t.cad !== 'once') t.day = dest.day;
+      saveTasks(); render();
+    };
+    top.appendChild(zs);
+
+    const del = document.createElement('button'); del.className='del'; del.textContent='×';
+    del.onclick = ()=>{ if (confirm('Remove "'+t.label+'"?')){
+      tasks = tasks.filter(x=>x.id!==t.id); saveTasks(); render(); } };
+    top.appendChild(del);
+    row.appendChild(top);
+
+    const ctl = document.createElement('div'); ctl.className='sctl';
+    const cs = document.createElement('select'); cs.className='cadsel';
+    cs.title = 'How often this repeats';
+    CADENCES.forEach(([val,label])=>{ const o=document.createElement('option');
+      o.value=val; o.textContent=label; if (val===t.cad) o.selected=true; cs.appendChild(o); });
+    cs.onchange = ()=>{
+      const to = cs.value;
+      changeCadence(t, to);
+      if (sp && to !== 'daily' && to !== 'once'){ t.day = sp.day; saveTasks(); render(); }
+    };
+    ctl.appendChild(cs);
+
+    if (t.cad !== 'daily' && t.cad !== 'once'){
+      const ds = document.createElement('select');
+      ds.title = sp ? 'Defaults to ' + DAY_FULL[sp.day] + ' — change only if this one differs' : 'Day';
+      DAYS.forEach(dn=>{ const o=document.createElement('option'); o.textContent=dn;
+        if (dn===t.day) o.selected=true; ds.appendChild(o); });
+      if (sp && t.day !== sp.day) ds.className = 'offday';
+      ds.onchange = ()=>{ t.day = ds.value; saveTasks(); render(); };
+      ctl.appendChild(ds);
+    }
+    if (t.cad==='monthly'||t.cad==='quarterly'||t.cad==='annual'){
+      const ws = document.createElement('select');
+      for (let w=1;w<=4;w++){ const o=document.createElement('option'); o.value=w; o.textContent='Wk '+w;
+        if (w===t.week) o.selected=true; ws.appendChild(o); }
+      ws.onchange = ()=>{ t.week = +ws.value; saveTasks(); render(); };
+      ctl.appendChild(ws);
+    }
+    if (t.cad==='annual'){
+      const ms = document.createElement('select');
+      MONTH_NAMES.forEach((mn,mi)=>{ const o=document.createElement('option'); o.value=mi; o.textContent=mn;
+        if (mi===t.month) o.selected=true; ms.appendChild(o); });
+      ms.onchange = ()=>{ t.month = +ms.value; saveTasks(); render(); };
+      ctl.appendChild(ms);
+    }
+    if (t.cad==='once'){
+      const dt = document.createElement('input'); dt.type='date'; dt.value = t.date||'';
+      dt.onchange = ()=>{ t.date = dt.value; saveTasks(); render(); };
+      ctl.appendChild(dt);
+    }
+    row.appendChild(ctl);
+    return row;
+  }
+
+  function spaceCard(sp){
+    const list = tasksInSpace(sp.name).slice().sort((a,b)=>{
+      const c = (cadRank[a.cad]||9) - (cadRank[b.cad]||9);
+      if (c !== 0) return c;
+      if (a.cad === 'annual' && a.month !== b.month) return (a.month||0)-(b.month||0);
+      if (a.week !== b.week && a.week != null && b.week != null) return (a.week||0)-(b.week||0);
+      if (di(a) !== di(b)) return di(a) - di(b);
+      return a.label.localeCompare(b.label);
+    });
+    const offDay = list.filter(t=>t.day && t.day !== sp.day &&
+      t.cad !== 'daily' && t.cad !== 'once').length;
+
+    const sec = document.createElement('section'); sec.className='sched spacecard';
+    const head = document.createElement('div'); head.className='sphead';
+
+    const nm = document.createElement('span'); nm.className='spname';
+    nm.textContent = sp.name; nm.title = 'Long-press to rename this space';
+    attachLongPress(nm, ()=>{
+      const v = prompt('Rename this space:', sp.name);
+      if (v === null || !v.trim()) return;
+      const other = spaceByName(v.trim());
+      if (other && other.id !== sp.id){ alert('You already have a space called ' + v.trim() + '.'); return; }
+      renameSpace(sp, v.trim());
+    });
+
+    const dsel = document.createElement('select'); dsel.className='spday';
+    dsel.title = 'The day this space gets done';
+    DAYS.forEach(dn=>{ const o=document.createElement('option'); o.value=dn;
+      o.textContent=DAY_FULL[dn]; if (dn===sp.day) o.selected=true; dsel.appendChild(o); });
+    dsel.onchange = ()=> setSpaceDay(sp, dsel.value);
+
+    const cnt = document.createElement('span'); cnt.className='spcount';
+    cnt.textContent = list.length + (list.length===1?' task':' tasks');
+
+    const rm = document.createElement('button'); rm.className='del'; rm.textContent='×';
+    rm.title = 'Delete this space';
+    rm.onclick = ()=>{
+      const msg = list.length
+        ? 'Delete the ' + sp.name + ' space and its ' + list.length + ' task' + (list.length===1?'':'s') + '?'
+        : 'Delete the ' + sp.name + ' space?';
+      if (!confirm(msg)) return;
+      tasks = tasks.filter(t=>t.bucket !== sp.name);
+      spaces = spaces.filter(s=>s.id !== sp.id);
+      saveSpaces(); saveTasks(); render();
+    };
+
+    head.appendChild(nm); head.appendChild(dsel); head.appendChild(cnt); head.appendChild(rm);
+    sec.appendChild(head);
+
+    if (offDay){
+      const w = document.createElement('div'); w.className='spwarn';
+      w.textContent = offDay + (offDay===1?' task sits':' tasks sit') + ' on a different day to this space.';
+      sec.appendChild(w);
+    }
+
     if (!list.length){
       const e = document.createElement('div'); e.className='empty';
-      e.textContent = 'Nothing here yet.'; sec.appendChild(e);
+      e.textContent = 'No tasks in here yet.'; sec.appendChild(e);
     }
-    list.forEach(t=>{
-      const row = document.createElement('div'); row.className='srow';
+    list.forEach(t=> sec.appendChild(buildTaskRow(t, sp)));
 
-      /* ---- line 1: name, zone, delete ---- */
-      const top = document.createElement('div'); top.className='stop';
-      const lbl = document.createElement('span'); lbl.className='lbl';
-      lbl.textContent = t.label; lbl.title='Long-press to rename'; lbl.style.cursor='pointer';
-      attachLongPress(lbl, ()=>{ const v=prompt('Rename task:', t.label);
-        if (v!==null && v.trim()){ t.label=v.trim(); saveTasks(); render(); } });
-      top.appendChild(lbl);
-
-      const zs = document.createElement('select'); zs.className='zsel';
-      zs.title = 'Zone — change it to move this task';
-      const zones = BUCKETS.slice();
-      if (t.bucket && zones.indexOf(t.bucket) === -1) zones.push(t.bucket);
-      zones.forEach(b=>{ const o=document.createElement('option'); o.textContent=b;
-        if (b===t.bucket) o.selected=true; zs.appendChild(o); });
-      zs.onchange = ()=>{ t.bucket = zs.value; saveTasks(); render(); };
-      top.appendChild(zs);
-
-      const del = document.createElement('button'); del.className='del'; del.textContent='×';
-      del.onclick = ()=>{ if (confirm('Remove "'+t.label+'"?')){
-        tasks = tasks.filter(x=>x.id!==t.id); saveTasks(); render(); } };
-      top.appendChild(del);
-      row.appendChild(top);
-
-      /* ---- line 2: how often, and whatever that cadence needs ---- */
-      const ctl = document.createElement('div'); ctl.className='sctl';
-
-      const cs = document.createElement('select'); cs.className='cadsel';
-      cs.title = 'How often this repeats';
-      CADENCES.forEach(([val,label])=>{ const o=document.createElement('option');
-        o.value=val; o.textContent=label; if (val===t.cad) o.selected=true; cs.appendChild(o); });
-      cs.onchange = ()=> changeCadence(t, cs.value);
-      ctl.appendChild(cs);
-
-      if (t.cad !== 'daily' && t.cad !== 'once'){
-        const ds = document.createElement('select');
-        DAYS.forEach(dn=>{ const o=document.createElement('option'); o.textContent=dn;
-          if (dn===t.day) o.selected=true; ds.appendChild(o); });
-        ds.onchange = ()=>{ t.day = ds.value; saveTasks(); render(); };
-        ctl.appendChild(ds);
-      }
-      if (t.cad==='monthly'||t.cad==='quarterly'||t.cad==='annual'){
-        const ws = document.createElement('select');
-        for (let w=1;w<=4;w++){ const o=document.createElement('option'); o.value=w; o.textContent='Wk '+w;
-          if (w===t.week) o.selected=true; ws.appendChild(o); }
-        ws.onchange = ()=>{ t.week = +ws.value; saveTasks(); render(); };
-        ctl.appendChild(ws);
-      }
-      if (t.cad==='annual'){
-        const ms = document.createElement('select');
-        MONTH_NAMES.forEach((mn,mi)=>{ const o=document.createElement('option'); o.value=mi; o.textContent=mn;
-          if (mi===t.month) o.selected=true; ms.appendChild(o); });
-        ms.onchange = ()=>{ t.month = +ms.value; saveTasks(); render(); };
-        ctl.appendChild(ms);
-      }
-      if (t.cad==='once'){
-        const di = document.createElement('input'); di.type='date'; di.value = t.date||'';
-        di.onchange = ()=>{ t.date = di.value; saveTasks(); render(); };
-        ctl.appendChild(di);
-      }
-      row.appendChild(ctl);
-      sec.appendChild(row);
-    });
-    if (cad === 'once'){
-      const today = ymd(new Date(now));
-      const past = list.filter(t=>t.date && t.date < today);
-      if (past.length){
-        const cp = document.createElement('button'); cp.className='wbtn';
-        cp.style.cssText = 'width:100%;margin:10px 0 6px;';
-        cp.textContent = 'Clear ' + past.length + ' past one-time task' + (past.length===1?'':'s');
-        cp.onclick = ()=>{
-          if (!confirm('Remove ' + past.length + ' one-time task' +
-            (past.length===1?'':'s') + ' whose date has already passed?')) return;
-          const ids = past.map(t=>t.id);
-          tasks = tasks.filter(t=>ids.indexOf(t.id) === -1);
-          saveTasks(); render();
-        };
-        sec.appendChild(cp);
-      }
+    /* inline add — inherits the space's day, which is the whole point */
+    const ar = document.createElement('div'); ar.className='sptaskadd';
+    const ti = document.createElement('input'); ti.type='text'; ti.className='mealin';
+    ti.placeholder = 'Add a task to ' + sp.name;
+    const ab = document.createElement('button'); ab.className='wbtn'; ab.textContent='Add';
+    function addTask(){
+      const v = ti.value.trim(); if (!v) return;
+      tasks.push({ id:'u'+Date.now()+Math.random().toString(36).slice(2,5),
+        label:v, cad:'weekly', bucket:sp.name, day:sp.day });
+      saveTasks(); ti.value=''; burstAt(ab,false); render();
     }
+    ab.onclick = addTask;
+    ti.onkeydown = e=>{ if (e.key === 'Enter') addTask(); };
+    ar.appendChild(ti); ar.appendChild(ab);
+    sec.appendChild(ar);
+    return sec;
+  }
+
+  spaces.forEach(sp=> wrap.appendChild(spaceCard(sp)));
+
+  /* ---------- anything whose space no longer exists ---------- */
+  const strays = orphanTasks();
+  if (strays.length){
+    const sec = document.createElement('section'); sec.className='sched';
+    const h = document.createElement('h2');
+    h.innerHTML = 'Not in a space<span class="hint">move them somewhere</span>';
+    sec.appendChild(h);
+    strays.forEach(t=> sec.appendChild(buildTaskRow(t, null)));
     wrap.appendChild(sec);
-  });
+  }
+
+  /* ---------- tidy up expired one-offs ---------- */
+  const today = ymd(new Date(now));
+  const past = tasks.filter(t=>t.cad==='once' && t.date && t.date < today);
+  if (past.length){
+    const cp = document.createElement('button'); cp.className='wbtn';
+    cp.style.cssText = 'width:100%;margin:4px 0 10px;';
+    cp.textContent = 'Clear ' + past.length + ' past one-time task' + (past.length===1?'':'s');
+    cp.onclick = ()=>{
+      if (!confirm('Remove ' + past.length + ' one-time task' +
+        (past.length===1?'':'s') + ' whose date has already passed?')) return;
+      const ids = past.map(t=>t.id);
+      tasks = tasks.filter(t=>ids.indexOf(t.id) === -1);
+      saveTasks(); render();
+    };
+    wrap.appendChild(cp);
+  }
 }
 
 /* ================= progress ================= */
@@ -1714,7 +1912,7 @@ function renderProgress(){
   const hc = document.createElement('div'); hc.className='pcard';
   hc.innerHTML = '<h3>Last 12 weeks</h3>';
   const heat = document.createElement('div'); heat.className='heat';
-  const start = mondayOf(now);
+  const start = weekStartOf(now);
   start.setDate(start.getDate() - 7*11);
   for (let w=0; w<12; w++){
     const col = document.createElement('div'); col.className='hcol';
@@ -1868,7 +2066,7 @@ function weekWorkoutStats(){
   const today0 = new Date(now); today0.setHours(0,0,0,0);
   DAYS.forEach((dn,idx)=>{
     if (dn === 'Sun') return;
-    const d = new Date(monday); d.setDate(d.getDate()+idx); d.setHours(0,0,0,0);
+    const d = new Date(weekStart); d.setDate(d.getDate()+idx); d.setHours(0,0,0,0);
     if (d > today0) return;
     elapsed++;
     const e = history[ymd(d)];
@@ -1876,19 +2074,19 @@ function weekWorkoutStats(){
   });
   return { elapsed, done };
 }
-/* miles for the 7 days starting at a given Monday */
-function milesForWeek(mondayDate){
+/* miles for the 7 days starting at a given week-start */
+function milesForWeek(startDate){
   let total = 0;
   for (let i=0;i<7;i++){
-    const d = new Date(mondayDate); d.setDate(d.getDate()+i);
+    const d = new Date(startDate); d.setDate(d.getDate()+i);
     const v = parseFloat(milesLog[ymd(d)]);
     if (v > 0) total += v;
   }
   return total;
 }
-function weekWalkMiles(){ return milesForWeek(monday); }
+function weekWalkMiles(){ return milesForWeek(weekStart); }
 function lastWeekWalkMiles(){
-  const m = new Date(monday); m.setDate(m.getDate()-7);
+  const m = new Date(weekStart); m.setDate(m.getDate()-7);
   return milesForWeek(m);
 }
 function renderInsights(){
@@ -1976,6 +2174,34 @@ function renderPlan(){
   link.className = 'grocerylink';
   link.innerHTML = '&#128722; My grocery list &#8599;';
   wrap.appendChild(link);
+  /* ---- the clock: drives the weekday routine on the Week tab ---- */
+  const tc = document.createElement('section'); tc.className='pcard';
+  tc.innerHTML = '<h3>Your day, by the clock</h3>';
+  TIME_FIELDS.forEach(([key,label])=>{
+    const r = document.createElement('div'); r.className='timerow';
+    const l = document.createElement('span'); l.className='timelbl'; l.textContent = label;
+    const inp = document.createElement('input'); inp.type='time'; inp.className='timein';
+    inp.value = tRaw(key);
+    inp.onchange = ()=>{
+      if (inp.value) times[key] = inp.value; else delete times[key];
+      saveTimes(); render();
+    };
+    r.appendChild(l); r.appendChild(inp);
+    tc.appendChild(r);
+  });
+  const treset = document.createElement('button'); treset.className='wbtn';
+  treset.style.cssText = 'width:100%;margin-top:10px;';
+  treset.textContent = 'Reset times to defaults';
+  treset.onclick = ()=>{
+    if (!confirm('Put every time back to its default?')) return;
+    times = {}; saveTimes(); render();
+  };
+  tc.appendChild(treset);
+  const tnote = document.createElement('div'); tnote.className='exnote';
+  tnote.textContent = 'These write straight into your weekday routine on the Week tab.';
+  tc.appendChild(tnote);
+  wrap.appendChild(tc);
+
   wrap.appendChild(planSection('Meals', meals, 'mwl-meals', 'What’s for dinner?'));
   wrap.appendChild(planSection('Workouts', workouts, 'mwl-workouts', 'e.g. MAX 20 Day 11', true));
   wrap.appendChild(renderInsights());
@@ -2748,7 +2974,7 @@ const WORK_WEEK = {
   Sun: []
 };
 const WORK_STANDING = ['Review Praying the News','Review News Health'];
-let workDay = DAYS[(now.getDay()+6)%7];
+let workDay = DAYS[now.getDay()];
 
 let worktasks = [];
 try { worktasks = JSON.parse(localStorage.getItem('mwl-worktasks') || '[]'); } catch(e){ worktasks = []; }
@@ -2821,7 +3047,7 @@ function renderWork(){
 
   /* ---- standard weekly work, by day ---- */
   const daystrip = document.createElement('div'); daystrip.className='days';
-  const todayKey = DAYS[(now.getDay()+6)%7];
+  const todayKey = DAYS[now.getDay()];
   DAYS.forEach(d=>{
     const tot = workLeaves(d).length;
     const done = workLeaves(d).filter(k=>state[k]).length;
@@ -2937,45 +3163,98 @@ function renderWork(){
   wrap.appendChild(listCard);
 }
 
-/* ================= add ================= */
-const cadSel = document.getElementById('newCad');
-cadSel.onchange = ()=>{
-  const c = cadSel.value;
-  document.getElementById('newWeek').style.display = (c==='monthly'||c==='quarterly'||c==='annual')?'':'none';
-  document.getElementById('newMonth').style.display = c==='annual'?'':'none';
-  document.getElementById('newDate').style.display = c==='once'?'':'none';
-  document.getElementById('newDay').style.display = (c==='daily'||c==='once')?'none':'';
-};
-document.getElementById('addBtn').onclick = (ev)=>{
-  const label = document.getElementById('newLabel').value.trim();
-  if (!label) return;
-  const cad = cadSel.value;
-  const t = { id:'u'+Date.now(), label, cad, bucket: document.getElementById('newBucket').value };
-  if (cad!=='daily' && cad!=='once'){
-    const dv = document.getElementById('newDay').value;
-    t.day = dv==='auto' ? autoDay() : dv;
+/* ================= rogue mode =================
+   Every task due this week, grouped by zone instead of by day. Ticking here
+   writes to exactly the same key the Week tab uses for that task's scheduled
+   day — there's no second copy of "done", so the two views can't drift. */
+function weekTaskRows(){
+  const seen = {}, rows = [];
+  DAYS.forEach(dn=>{
+    liveTasksOn(dn).forEach(t=>{
+      if (t.cad === 'daily') return;      /* daily chores repeat every day; no single day to move */
+      if (seen[t.id]) return;
+      seen[t.id] = true;
+      rows.push({ task:t, day:dn });
+    });
+  });
+  return rows;
+}
+function renderRogue(){
+  const wrap = document.getElementById('rogueView'); wrap.innerHTML = '';
+  const rows = weekTaskRows();
+
+  const intro = document.createElement('div'); intro.className='exnote';
+  intro.style.padding = '0 2px 10px';
+  intro.textContent = 'Everything due this week, by zone. Did a kitchen job early? Tick it here — it lands on its real day in the Week tab, and vice versa.';
+  wrap.appendChild(intro);
+
+  if (!rows.length){
+    const em = document.createElement('div'); em.className='pcard';
+    em.innerHTML = '<div class="exnote">Nothing scheduled this week yet. Add tasks on the Tasks tab.</div>';
+    wrap.appendChild(em);
+    return;
   }
-  if (cad==='monthly'||cad==='quarterly'||cad==='annual'){
-    const wv = document.getElementById('newWeek').value;
-    t.week = wv==='auto' ? autoWeek(cad) : +wv;
-  }
-  if (cad==='annual') t.month = +document.getElementById('newMonth').value;
-  if (cad==='once'){
-    const tm = new Date(now); tm.setDate(tm.getDate()+1);
-    t.date = document.getElementById('newDate').value || ymd(tm);
-  }
-  tasks.push(t); saveTasks();
-  document.getElementById('newLabel').value = '';
-  burstAt(ev.target, false);
-  render();
-};
+
+  const done = rows.filter(r=>state[storeId(r.day, r.task.id)]).length;
+  const bar = document.createElement('div'); bar.className='pcard rgtotal';
+  bar.innerHTML = '<div class="rgnum">'+done+' / '+rows.length+'</div>' +
+    '<div class="rglbl">done this week</div>' +
+    '<div class="rgbar"><i style="width:'+(rows.length?Math.round(100*done/rows.length):0)+'%"></i></div>';
+  wrap.appendChild(bar);
+
+  const order = spaceNames().slice();
+  rows.forEach(r=>{ if (order.indexOf(r.task.bucket) === -1) order.push(r.task.bucket); });
+
+  order.forEach(zone=>{
+    const mine = rows.filter(r=>r.task.bucket === zone);
+    if (!mine.length) return;
+    mine.sort((a,b)=>{
+      const d = DAYS.indexOf(a.day) - DAYS.indexOf(b.day);
+      return d !== 0 ? d : a.task.label.localeCompare(b.task.label);
+    });
+    const zDone = mine.filter(r=>state[storeId(r.day, r.task.id)]).length;
+
+    const card = document.createElement('section'); card.className='pcard rgzone';
+    const h = document.createElement('h3');
+    h.innerHTML = '<span>'+zone+'</span><span class="rgc'+(zDone===mine.length?' all':'')+'">'+
+      zDone+'/'+mine.length+'</span>';
+    card.appendChild(h);
+
+    mine.forEach(r=>{
+      const id = storeId(r.day, r.task.id);
+      const isDone = !!state[id];
+      const row = document.createElement('label'); row.className='rgrow'+(isDone?' done':'');
+      const cb = document.createElement('input'); cb.type='checkbox'; cb.checked = isDone;
+      cb.onchange = ()=>{
+        if (cb.checked) state[id] = true; else delete state[id];
+        save();
+        if (cb.checked) burstAt(cb, false);
+        render();
+      };
+      const nm = document.createElement('span'); nm.className='rgn'; nm.textContent = r.task.label;
+      const dp = document.createElement('span'); dp.className='rgd';
+      dp.textContent = r.day;
+      dp.title = 'Scheduled for ' + DAY_FULL[r.day];
+      row.appendChild(cb); row.appendChild(nm);
+      if (r.task.cad !== 'weekly'){
+        const tg = document.createElement('span'); tg.className='rgt'; tg.textContent = r.task.cad;
+        row.appendChild(tg);
+      }
+      row.appendChild(dp);
+      card.appendChild(row);
+    });
+    wrap.appendChild(card);
+  });
+
+  const foot = document.createElement('div'); foot.className='exnote';
+  foot.style.textAlign='center';
+  foot.textContent = 'Everyday habits aren’t listed here — they repeat daily, so they live on the Week tab.';
+  wrap.appendChild(foot);
+}
 
 /* ================= top level ================= */
 function render(){
   snapshotToday();
-  const k = Math.ceil((new Date(2026,7,20) - now)/86400000);
-  document.getElementById('kcount').textContent = k>0
-    ? 'Kindergarten in '+k+' days (Aug 20)' : 'School year in session';
 
   document.getElementById('tabWeek').className = view==='week'?'on':'';
   document.getElementById('tabPlan').className = view==='plan'?'on':'';
@@ -2983,33 +3262,36 @@ function render(){
   document.getElementById('tabProg').className = view==='prog'?'on':'';
   document.getElementById('tabFood').className = view==='food'?'on':'';
   document.getElementById('tabWork').className = view==='work'?'on':'';
+  document.getElementById('tabRogue').className = view==='rogue'?'on':'';
   document.getElementById('weekView').style.display = view==='week'?'':'none';
   document.getElementById('planView').style.display = view==='plan'?'':'none';
   document.getElementById('allView').style.display = view==='all'?'':'none';
   document.getElementById('progView').style.display = view==='prog'?'':'none';
   document.getElementById('foodView').style.display = view==='food'?'':'none';
   document.getElementById('workView').style.display = view==='work'?'':'none';
+  document.getElementById('rogueView').style.display = view==='rogue'?'':'none';
   if (view==='week') renderWeek(); else if (view==='plan') renderPlan();
   else if (view==='all') renderAll(); else if (view==='prog') renderProgress();
-  else if (view==='food') renderFood(); else renderWork();
+  else if (view==='food') renderFood(); else if (view==='rogue') renderRogue();
+  else renderWork();
 
   if (view !== lastRenderedView){
-    const map = { week:'weekView', plan:'planView', all:'allView', prog:'progView', food:'foodView', work:'workView' };
+    const map = { week:'weekView', plan:'planView', all:'allView', prog:'progView', food:'foodView', work:'workView', rogue:'rogueView' };
     const el = document.getElementById(map[view]);
     if (el){ el.classList.remove('viewin'); void el.offsetWidth; el.classList.add('viewin'); }
     lastRenderedView = view;
   }
 
   // ---- contextual hero ----
-  let title='The 5am Club', sub='', big='', small='', pct=0, color='var(--pop)', showK=false;
+  let title='The 5am Club', sub='', big='', small='', pct=0, color='var(--pop)';
   if (view==='week'){
     const p=dayProgress(selDay); pct=p.total?100*p.done/p.total:0;
-    sub = version==='now' ? 'Summer rhythm — wake 5:00, kids up 7:30' : 'School rhythm — wake 5:00, drop-off by 7:25';
-    big=p.done+' of '+p.total+' done'; small=DAY_FULL[selDay]; showK=true;
+    sub = 'Wake 5:00 — out the door by 7:25';
+    big=p.done+' of '+p.total+' done'; small=DAY_FULL[selDay];
   } else if (view==='plan'){
     const p=weekProgress(); pct=p.total?100*p.done/p.total:0;
     sub='Set the week once — it pulls onto each day';
-    big=p.done+' of '+p.total+' this week'; small='meals + workouts'; showK=true;
+    big=p.done+' of '+p.total+' this week'; small='meals + workouts';
   } else if (view==='all'){
     const p=weekProgress(); pct=p.total?100*p.done/p.total:0;
     sub='Everything on your plate, one place';
@@ -3028,6 +3310,14 @@ function render(){
     title='Today’s Fuel'; color='#ffd166';
     sub='Aim: '+CAL_MIN.toLocaleString()+'–'+CAL_MAX.toLocaleString()+' cal · '+PRO_FLOOR+'g protein floor';
     big=cal+' / '+CAL_MAX+' cal'; small=pro+'g protein · R10 '+r10;
+  } else if (view==='rogue'){
+    const rr = weekTaskRows();
+    const rdone = rr.filter(r=>state[storeId(r.day, r.task.id)]).length;
+    pct = rr.length ? 100*rdone/rr.length : 0;
+    title='Rogue Mode'; color='#3ddc97';
+    sub='Every zone, whole week — do it whenever you like';
+    big = rr.length ? rdone+' of '+rr.length+' knocked out' : 'Nothing scheduled this week';
+    small = 'ticks land on the right day automatically';
   } else { // work
     const wl=workLeaves(workDay), wdone=wl.filter(x=>state[x]).length;
     pct=wl.length?100*wdone/wl.length:0;
@@ -3039,7 +3329,6 @@ function render(){
   document.querySelector('.hero').className = 'hero h-'+view;
   document.querySelector('.hero h1').textContent = title;
   document.getElementById('subline').textContent = sub;
-  document.getElementById('kcount').style.display = showK ? '' : 'none';
   const C = 2*Math.PI*26; const rpct = Math.max(0,Math.min(100,pct));
   const rv = document.getElementById('ringVal');
   rv.style.strokeDashoffset = C - C*rpct/100; rv.style.stroke = color;
@@ -3049,8 +3338,8 @@ function render(){
   document.getElementById('ringSmall').textContent = small;
 
   document.getElementById('wkLabel').textContent = 'Week of ' +
-    monday.toLocaleDateString('en-US',{month:'short',day:'numeric'}) +
-    ' — checks reset each Monday';
+    weekStart.toLocaleDateString('en-US',{month:'short',day:'numeric'}) +
+    ' — checks reset each Sunday';
 }
 
 /* ================= quick capture / inbox ================= */
@@ -3128,8 +3417,7 @@ document.getElementById('tabAll').onclick = ()=>{ view='all'; localStorage.setIt
 document.getElementById('tabProg').onclick = ()=>{ view='prog'; localStorage.setItem('mwl-view','prog'); render(); };
 document.getElementById('tabFood').onclick = ()=>{ view='food'; localStorage.setItem('mwl-view','food'); render(); };
 document.getElementById('tabWork').onclick = ()=>{ view='work'; localStorage.setItem('mwl-view','work'); render(); };
-document.getElementById('vNow').onclick = ()=>{ setVersion('now'); };
-document.getElementById('vSchool').onclick = ()=>{ setVersion('school'); };
+document.getElementById('tabRogue').onclick = ()=>{ view='rogue'; localStorage.setItem('mwl-view','rogue'); render(); };
 /* Clears every checkbox for a genuinely fresh week. Safe for streaks because
    snapshotToday() treats past days as upgrade-only — the record of a workout
    already logged can't be undone by clearing the box. */
