@@ -111,6 +111,7 @@
   .anchor { color:var(--gold); font-weight:700; }
   .row.gold { background:linear-gradient(90deg,var(--gold-soft),transparent 70%);
     margin:0 -15px; padding:0 15px; }
+  .tag.zone { color:#0f7a52; background:#e4f6ee; }
   .tag { display:inline-block; font-size:0.6rem; font-weight:700; text-transform:uppercase;
     letter-spacing:0.06em; color:var(--accent); background:var(--accent-soft);
     border-radius:8px; padding:2px 7px; margin-left:6px; vertical-align:1px; }
@@ -991,7 +992,7 @@ function fixedPlan(day){
       ['Workout — family walk or make-up day', true, 'workout', 'workout'],
       ['Start a load of laundry', false, null, 'laundry-start']
     ]},
-    Home: { time:'morning block', items:[
+    'Weekend block': { time:'morning block', items:[
       ['One household project or errand — just one', false, null, 'project'],
       ['Fold + put away laundry', false, null, 'laundry-fold']
     ]},
@@ -1009,7 +1010,7 @@ function fixedPlan(day){
         ['Rest day — easy walk only', false, null, 'rest'],
         ['Start a load of laundry', false, null, 'laundry-start']
       ]},
-      Home: { time:'planning block', items:[
+      'Planning block': { time:'planning block', items:[
         ['Meal plan the week — anchor to proteins on hand', true, null, 'mealplan'],
         ['Build the prep list (what gets done at each lunch break)', false, null, 'preplist'],
         ['Fold + put away laundry', false, null, 'laundry-fold']
@@ -1038,10 +1039,10 @@ function fixedPlan(day){
       ['Lunch break: dinner prep (chop, marinate, or crockpot on)', true, null, 'lunchprep'],
       ['Hard stop by '+tf('workend'), false, null, 'hardstop']
     ]},
-    Home: { time:'fits in the gaps', items:[
+    'Daily tasks': { time:'fits in the gaps', items:[
       ['Start a load of laundry', false, null, 'laundry-start'],
       ['Switch laundry to dryer (mid-morning)', false, null, 'laundry-dryer'],
-      ['10-min toy pickup with the kids (~5:30)', false, null, 'toypickup']
+      ['10-min toy pickup with the kids', false, null, 'toypickup']
     ]},
     Evening: { time: tf('dinner')+' \u2013 '+tf('mybed'), items:[
       ['Dinner on the table at '+tf('dinner'), false, 'meal', 'dinner'],
@@ -1273,6 +1274,31 @@ if (!localStorage.getItem('mwl-slugmig-v1')){
   if (movedState) save();
   if (movedPins) localStorage.setItem('mwl-nn', JSON.stringify(nn));
   localStorage.setItem('mwl-slugmig-v1','1');
+}
+
+/* The routine's "Home" block became 'Daily tasks' on weekdays and got a plainer
+   name at weekends — carry its ticks and pins over to the new block names. */
+if (!localStorage.getItem('mwl-blockmig-v1')){
+  const rename = dn => dn === 'Sat' ? 'Weekend block' : dn === 'Sun' ? 'Planning block' : 'Daily tasks';
+  let movedState = false, movedPins = false;
+  DAYS.forEach(dn=>{
+    const to = rename(dn);
+    Object.keys(state).forEach(k=>{
+      const p = k.split('|');
+      if (p.length === 3 && p[0] === dn && p[1] === 'Home'){
+        const nk = dn+'|'+to+'|'+p[2];
+        if (state[nk] === undefined){ state[nk] = state[k]; }
+        delete state[k]; movedState = true;
+      }
+    });
+    const list = nn[dn];
+    if (list) list.forEach((rk,idx)=>{
+      if (rk.indexOf('Home#') === 0){ list[idx] = to + '#' + rk.slice(5); movedPins = true; }
+    });
+  });
+  if (movedState) save();
+  if (movedPins) localStorage.setItem('mwl-nn', JSON.stringify(nn));
+  localStorage.setItem('mwl-blockmig-v1','1');
 }
 function storeId(d,t){ return 'T|'+d+'|'+t; }
 function noteId(d){ return 'wnote|'+d; }
@@ -1528,19 +1554,38 @@ function renderWeek(){
 
   const plan = fixedPlan(selDay);
   const dayTasks = liveTasksOn(selDay);
-  const names = Object.keys(plan);
-  dayTasks.forEach(t=>{ if (!names.includes(t.bucket)) names.push(t.bucket); });
+
+  /* Sections are explicit now: the routine blocks in order, every everyday
+     habit pooled into "Daily tasks" regardless of which space it belongs to,
+     and whatever zone is due today under "Today's focus space". */
+  const DAILY_BLOCK = 'Daily tasks';
+  const FOCUS = 'Today’s focus';
+
+  /* which space is actually "today's" — used as the focus subtitle, and to
+     decide which rows need a space chip */
+  const todaysSpaces = spaces.filter(s=>s.day === selDay).map(s=>s.name);
 
   const all = [];
-  names.forEach(bucket=>{
-    const fixed = plan[bucket] ? plan[bucket].items : [];
-    fixed.forEach((it,i)=> all.push({ bucket, text:it[0], anchor:it[1], special:it[2],
+  Object.keys(plan).forEach(bucket=>{
+    plan[bucket].items.forEach(it=> all.push({ bucket, text:it[0], anchor:it[1], special:it[2],
       id:fixedId(selDay,bucket,it[3]), rk:bucket+'#'+it[3], tag:'' }));
-    dayTasks.filter(t=>t.bucket===bucket).forEach(t=> all.push({ bucket, text:t.label,
-      anchor:false, special:null, id:storeId(selDay,t.id), rk:'T#'+t.id,
-      tag:t.cad==='weekly'?'':t.cad, task:t,
-      bumped: movedTo(t)===selDay && !occursOn(t, dateFor(selDay)) }));
   });
+  dayTasks.forEach(t=>{
+    const daily = t.cad === 'daily';
+    all.push({ bucket: daily ? DAILY_BLOCK : FOCUS, text:t.label,
+      anchor:false, special:null, id:storeId(selDay,t.id), rk:'T#'+t.id,
+      tag: (daily || t.cad === 'weekly') ? '' : t.cad, task:t, zone: (daily || todaysSpaces.indexOf(t.bucket) !== -1) ? '' : t.bucket,
+      bumped: movedTo(t)===selDay && !occursOn(t, dateFor(selDay)) });
+  });
+
+  /* ordered list of sections to draw */
+  const order = [];
+  ['Morning','Work Day'].forEach(b=>{ if (plan[b]) order.push(b); });
+  order.push(DAILY_BLOCK);
+  ['Weekend block','Planning block'].forEach(b=>{ if (plan[b]) order.push(b); });
+  if (plan['Evening']) order.push('Evening');
+  order.push(FOCUS);
+  Object.keys(plan).forEach(b=>{ if (order.indexOf(b) === -1) order.push(b); });
 
   const wrap = document.getElementById('buckets'); wrap.innerHTML = '';
   wrap.appendChild(streakCard());
@@ -1548,12 +1593,12 @@ function renderWeek(){
   const picks = nnList(selDay);
   const card = document.createElement('section'); card.className='nncard';
   const ch = document.createElement('h2');
-  ch.innerHTML = '<span class="nm">Today’s non-negotiables</span>' +
+  ch.innerHTML = '<span class="nm">Today\u2019s non-negotiables</span>' +
     '<span class="cnt">' + picks.length + ' of 5</span>';
   card.appendChild(ch);
   if (!picks.length){
     const hint = document.createElement('div'); hint.className='nnhint';
-    hint.textContent = 'Tap the star on any task below to pin it here. Pick up to five — if only these get done, the day still counts.';
+    hint.textContent = 'Tap the star on any task below to pin it here. Pick up to five \u2014 if only these get done, the day still counts.';
     card.appendChild(hint);
   } else {
     picks.forEach(rk=>{
@@ -1564,15 +1609,23 @@ function renderWeek(){
   }
   wrap.appendChild(card);
 
-  const TONE = { 'Morning':'b-morning', 'Work Day':'b-work', 'Home':'b-home', 'Evening':'b-evening' };
-  names.forEach(bucket=>{
+  const TONE = { 'Morning':'b-morning', 'Work Day':'b-work', 'Evening':'b-evening',
+    'Daily tasks':'b-home', 'Weekend block':'b-home', 'Planning block':'b-home' };
+  order.forEach(bucket=>{
     const mine = all.filter(x=>x.bucket===bucket);
     if (!mine.length) return;
     const sec = document.createElement('section');
     sec.className = 'bucket ' + (TONE[bucket] || 'b-zone');
+    let sub;
+    if (bucket === FOCUS){
+      sub = todaysSpaces.length ? todaysSpaces.join(' + ') : 'whatever\u2019s due';
+    } else if (bucket === DAILY_BLOCK){
+      sub = plan[bucket] ? plan[bucket].time : 'fits in the gaps';
+    } else {
+      sub = plan[bucket] ? plan[bucket].time : '';
+    }
     const h = document.createElement('h2');
-    h.innerHTML = '<span class="nm">' + bucket + '</span><span class="time">' +
-      (plan[bucket] ? plan[bucket].time : 'zone day') + '</span>';
+    h.innerHTML = '<span class="nm">' + bucket + '</span><span class="time">' + sub + '</span>';
     sec.appendChild(h);
     mine.forEach(it=> sec.appendChild(makeRow(it, false)));
     wrap.appendChild(sec);
@@ -1640,7 +1693,9 @@ function makeRow(item, inCard){
     pull = w ? ' · <span class="pulled">'+w+'</span>' : ' · <span class="pullempty">set in Plan</span>';
   }
   const core = (isAnchor ? '<span class="anchor">'+t+'</span>' : t);
-  span.innerHTML = core + pull + (tag ? '<span class="tag">'+tag+'</span>' : '');
+  span.innerHTML = core + pull +
+    (item.zone ? '<span class="tag zone">'+item.zone+'</span>' : '') +
+    (tag ? '<span class="tag">'+tag+'</span>' : '');
   lab.appendChild(cb); lab.appendChild(span);
 
   const flex = document.createElement('div'); flex.className='rowflex';
