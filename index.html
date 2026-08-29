@@ -434,6 +434,26 @@
   .rowflex { display:flex; align-items:flex-start; }
 
   /* ---------- streaks ---------- */
+  /* ---------- right now ---------- */
+  .rnow { display:flex; align-items:baseline; gap:9px; flex-wrap:wrap;
+    background:linear-gradient(120deg,#22c9d8,#7c5cc4 60%,#e0457b);
+    color:#fff; border-radius:14px; padding:12px 15px; margin-bottom:14px;
+    box-shadow:var(--shadow); }
+  .rnow .rnclock { font-size:1.05rem; font-weight:800; letter-spacing:-0.01em; }
+  .rnow .rnlabel { font-size:0.92rem; font-weight:700; }
+  .rnow .rnsub { font-size:0.72rem; opacity:.85; flex-basis:100%; }
+
+  /* ---------- what moves the needle ---------- */
+  .drow { padding:10px 0; border-top:1px solid var(--line); }
+  .drow:first-of-type { border-top:none; }
+  .drow .dt { font-size:0.85rem; line-height:1.4; }
+  .drow .dt b { color:var(--accent); }
+  .drow .dn { font-size:0.72rem; color:var(--muted); margin-top:4px; font-weight:600; }
+  .drow .dn span { font-weight:400; opacity:.8; }
+
+  /* ---------- Sunday review ---------- */
+  .revcard { border:1.5px solid #d8c3ea; }
+
   .streaks { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
   .sk { background:var(--card); border:0.5px solid var(--line); border-radius:14px;
     padding:12px 8px 11px; text-align:center; box-shadow:var(--shadow); position:relative; overflow:hidden; }
@@ -758,6 +778,7 @@ const DEFAULT_TASKS = [
   {id:'d4', label:'Sort mail', cad:'daily', bucket:'Home'},
   {id:'d5', label:'Wipe down surfaces', cad:'daily', bucket:'Home'},
   {id:'d6', label:'Quick floor cleanup', cad:'daily', bucket:'Home'},
+  {id:'d7', label:'Take meds', cad:'daily', bucket:'Home'},
   {id:'d2', label:'Empty trashes', cad:'weekly', day:'Sun', bucket:'Home'},
 
   {id:'k1', label:'Clean sink', cad:'weekly', day:'Mon', bucket:'Kitchen'},
@@ -906,6 +927,15 @@ if (!Array.isArray(spaces) || !spaces.length){
   saveSpaces();
 }
 function spaceNames(){ return spaces.map(s=>s.name); }
+/* Seeded defaults still carry the old zone name. If that space has been
+   renamed, follow it — otherwise a newly added default lands orphaned. */
+(function(){
+  if (spaceByName('Home') || !spaceByName('Around the House')) return;
+  let moved = false;
+  tasks.forEach(t=>{ if (t.bucket === 'Home'){ t.bucket = 'Around the House'; moved = true; } });
+  if (moved) saveTasks();
+})();
+
 function spaceByName(n){ return spaces.filter(s=>s.name === n)[0] || null; }
 function tasksInSpace(name){ return tasks.filter(t=>t.bucket === name); }
 function orphanTasks(){
@@ -980,6 +1010,44 @@ function tf(k){
   return ((h % 12) === 0 ? 12 : h % 12) + ':' + p[1];
 }
 
+/* ================= right now =================
+   The routine already knows every time of day; this reads the clock and says
+   which block you're in, so at 5am you don't have to decide. */
+function tMin(k){ const p = tRaw(k).split(':'); return (+p[0])*60 + (+p[1]); }
+function rightNow(){
+  const d = new Date();
+  const dow = DAYS[d.getDay()];
+  if (dow === 'Sat' || dow === 'Sun') return null;   /* weekends aren't clocked */
+  const mins = d.getHours()*60 + d.getMinutes();
+  const segs = [
+    [tMin('wake'),      tMin('block'),      'Laundry, bed, caffeine'],
+    [tMin('block'),     tMin('devotional'), 'Devotional'],
+    [tMin('workout'),   tMin('james'),      'Workout'],
+    [tMin('james'),     tMin('kids'),       'Wake James'],
+    [tMin('kids'),      tMin('leave'),      'Wake Bennett & Emma'],
+    [tMin('leave'),     tMin('workstart'),  'School run'],
+    [tMin('workstart'), tMin('workend'),    'Work — walking pad on'],
+    [tMin('workend'),   tMin('dinner'),     'Home — dinner prep'],
+    [tMin('dinner'),    tMin('bath'),       'Dinner'],
+    [tMin('bath'),      tMin('kidsbed'),    'Bathtime'],
+    [tMin('kidsbed'),   tMin('mybed'),      'Kitchen reset, lay out tomorrow'],
+    [tMin('mybed'),     24*60,              'In bed']
+  ].filter(s=>s[1] > s[0]);
+  const clock = ((d.getHours()%12)===0?12:d.getHours()%12) + ':' + String(d.getMinutes()).padStart(2,'0');
+  if (mins < tMin('wake')) return { clock, label:'Still asleep', sub:'Up at ' + tf('wake') };
+  for (let i=0;i<segs.length;i++){
+    const s = segs[i];
+    if (mins >= s[0] && mins < s[1]){
+      const nx = segs[i+1];
+      const endH = Math.floor(s[1]/60), endM = String(s[1]%60).padStart(2,'0');
+      const end = ((endH%12)===0?12:endH%12) + ':' + endM;
+      return { clock, label:s[2],
+        sub: s[1] < 24*60 ? ('until ' + end + (nx ? ' \u00b7 then ' + nx[2] : '')) : '' };
+    }
+  }
+  return { clock, label:'In bed', sub:'' };
+}
+
 function fixedPlan(day){
   /* The 4th slot on each row is a permanent id. Checkmarks and pinned
      non-negotiables key off it instead of the row's position, so editing the
@@ -988,8 +1056,9 @@ function fixedPlan(day){
   if (day === 'Sat') return {
     Morning: { time:'flex', items:[
       ['Wake by 6:30 — keep the rhythm, gently', false, null, 'wake'],
+      ['Make the bed', false, null, 'makebed'],
       ['Devotional', false, null, 'devotional'],
-      ['Workout — family walk or make-up day', true, 'workout', 'workout'],
+      ['Workout', true, 'workout', 'workout'],
       ['Start a load of laundry', false, null, 'laundry-start']
     ]},
     'Weekend block': { time:'morning block', items:[
@@ -1006,8 +1075,9 @@ function fixedPlan(day){
     return {
       Morning: { time:'flex', items:[
         ['Wake by 6:30', false, null, 'wake'],
+        ['Make the bed', false, null, 'makebed'],
         ['Devotional', false, null, 'devotional'],
-        ['Rest day — easy walk only', false, null, 'rest'],
+        ['Workout', false, 'workout', 'workout'],
         ['Start a load of laundry', false, null, 'laundry-start']
       ]},
       'Planning block': { time:'planning block', items:[
@@ -1300,6 +1370,20 @@ if (!localStorage.getItem('mwl-blockmig-v1')){
   if (movedPins) localStorage.setItem('mwl-nn', JSON.stringify(nn));
   localStorage.setItem('mwl-blockmig-v1','1');
 }
+
+/* Sunday's "Rest day" line became a Workout row that pulls from the Plan tab,
+   so move its tick and any pin onto the new row id. */
+if (!localStorage.getItem('mwl-sunworkout-v1')){
+  const from = 'Sun|Morning|rest', to = 'Sun|Morning|workout';
+  if (state[from] !== undefined && state[to] === undefined){ state[to] = state[from]; }
+  if (state[from] !== undefined){ delete state[from]; save(); }
+  const list = nn['Sun'];
+  if (list){
+    const at = list.indexOf('Morning#rest');
+    if (at !== -1){ list[at] = 'Morning#workout'; localStorage.setItem('mwl-nn', JSON.stringify(nn)); }
+  }
+  localStorage.setItem('mwl-sunworkout-v1','1');
+}
 function storeId(d,t){ return 'T|'+d+'|'+t; }
 function noteId(d){ return 'wnote|'+d; }
 
@@ -1462,6 +1546,129 @@ function allTimeDone(){
 function bestDayPct(){
   return Object.values(history).reduce((m,e)=>Math.max(m,e.p||0),0);
 }
+/* ================= what moves the needle =================
+   Your history already records, per day, whether you worked out, woke at 5 and
+   made bed-time. This just asks whether one predicts the next. */
+function driverStats(){
+  const keys = Object.keys(history).sort();
+  const bed = { yes:0, yesW:0, no:0, noW:0 };
+  const wake = { yes:0, yesW:0, no:0, noW:0 };
+  keys.forEach(k=>{
+    const d = ymdToDate(k);
+    if (anchorFreeze('workout', d)) return;        /* Sunday is a rest day */
+    const e = history[k];
+    const prev = history[ymd(new Date(d.getTime() - 86400000))];
+    const did = !!e.w;
+    if (prev && !anchorFreeze('bed', d)){
+      if (prev.b){ bed.yes++; if (did) bed.yesW++; } else { bed.no++; if (did) bed.noW++; }
+    }
+    if (!anchorFreeze('wake', d)){
+      if (e.k){ wake.yes++; if (did) wake.yesW++; } else { wake.no++; if (did) wake.noW++; }
+    }
+  });
+  const pct = (n,d)=> d ? Math.round(100*n/d) : null;
+  return {
+    bed: { onTime:{ n:bed.yes, pct:pct(bed.yesW,bed.yes) },
+           late:  { n:bed.no,  pct:pct(bed.noW,bed.no) } },
+    wake:{ onTime:{ n:wake.yes, pct:pct(wake.yesW,wake.yes) },
+           late:  { n:wake.no,  pct:pct(wake.noW,wake.no) } }
+  };
+}
+/* ================= last week, on Sunday =================
+   Sunday is the planning block, so surface the week just gone before she
+   plans the next one. */
+function lastWeekReview(){
+  const prevStart = new Date(weekStart); prevStart.setDate(prevStart.getDate()-7);
+  const days = [];
+  for (let i=0;i<7;i++){ const d=new Date(prevStart); d.setDate(d.getDate()+i); days.push(d); }
+  const ents = days.map(d=>history[ymd(d)]).filter(Boolean);
+  if (!ents.length) return null;
+  const pct = Math.round(ents.reduce((s,e)=>s+(e.p||0),0) / ents.length);
+  const workouts = days.filter(d=>!anchorFreeze('workout',d) && history[ymd(d)] && history[ymd(d)].w).length;
+  const workoutDays = days.filter(d=>!anchorFreeze('workout',d)).length;
+  const wakes = days.filter(d=>!anchorFreeze('wake',d) && history[ymd(d)] && history[ymd(d)].k).length;
+  const wakeDays = days.filter(d=>!anchorFreeze('wake',d)).length;
+  const miles = milesForWeek(prevStart);
+  let wDelta = null;
+  const es = weightEntries();
+  if (es.length){
+    const from = ymd(prevStart), to = ymd(days[6]);
+    const inWk = es.filter(e=>e.d >= from && e.d <= to);
+    if (inWk.length >= 2) wDelta = inWk[inWk.length-1].w - inWk[0].w;
+  }
+  return { pct, workouts, workoutDays, wakes, wakeDays, miles, wDelta,
+           label: prevStart.toLocaleDateString('en-US',{month:'short',day:'numeric'}) };
+}
+function reviewCard(){
+  const r = lastWeekReview();
+  const card = document.createElement('section'); card.className='pcard revcard';
+  card.innerHTML = '<h3>Last week \u00b7 week of ' + (r ? r.label : '\u2014') + '</h3>';
+  if (!r){
+    const em = document.createElement('div'); em.className='exnote';
+    em.textContent = 'Nothing recorded last week yet \u2014 this fills in once you\u2019ve got a week behind you.';
+    card.appendChild(em);
+    return card;
+  }
+  const stats = document.createElement('div'); stats.className='wstats';
+  stats.innerHTML =
+    '<div class="wstat"><div class="wsv">'+r.pct+'%</div><div class="wsl">done</div></div>' +
+    '<div class="wstat"><div class="wsv">'+r.workouts+'/'+r.workoutDays+'</div><div class="wsl">workouts</div></div>' +
+    '<div class="wstat"><div class="wsv">'+r.miles.toFixed(1)+'</div><div class="wsl">miles</div></div>';
+  card.appendChild(stats);
+  const rows = [['5am wakes', r.wakes + ' of ' + r.wakeDays]];
+  if (r.wDelta !== null) rows.push(['Weight', fmtDelta(r.wDelta) + ' lbs']);
+  rows.forEach(([l,v])=>{
+    const row = document.createElement('div'); row.className='brow';
+    row.innerHTML = '<span>'+l+'</span><span class="bn">'+v+'</span>';
+    card.appendChild(row);
+  });
+  const note = document.createElement('div'); note.className='exnote';
+  note.textContent = 'Worth a look before you plan the week ahead.';
+  card.appendChild(note);
+  return card;
+}
+function driverCard(){
+  const s = driverStats();
+  const card = document.createElement('div'); card.className='pcard';
+  card.innerHTML = '<h3>What moves the needle</h3>';
+  const MIN = 6;   /* fewer than this on either side is noise, not a pattern */
+  const lines = [];
+  if (s.bed.onTime.n >= MIN && s.bed.late.n >= MIN){
+    const diff = s.bed.onTime.pct - s.bed.late.pct;
+    lines.push({
+      t: 'After an on-time bedtime you work out <b>' + s.bed.onTime.pct + '%</b> of mornings' +
+         ' \u2014 after a late one, <b>' + s.bed.late.pct + '%</b>.',
+      n: s.bed.onTime.n + ' vs ' + s.bed.late.n + ' days',
+      verdict: diff >= 15 ? 'Bedtime is doing real work.'
+             : diff <= -15 ? 'Late nights aren\u2019t costing you the workout.'
+             : 'Barely any difference so far.'
+    });
+  }
+  if (s.wake.onTime.n >= MIN && s.wake.late.n >= MIN){
+    const diff = s.wake.onTime.pct - s.wake.late.pct;
+    lines.push({
+      t: 'On 5am days you work out <b>' + s.wake.onTime.pct + '%</b> of the time' +
+         ' \u2014 otherwise <b>' + s.wake.late.pct + '%</b>.',
+      n: s.wake.onTime.n + ' vs ' + s.wake.late.n + ' days',
+      verdict: diff >= 15 ? 'The early start is what buys the workout.'
+             : diff <= -15 ? 'You get it done either way.'
+             : 'Not much in it.'
+    });
+  }
+  if (!lines.length){
+    const em = document.createElement('div'); em.className='exnote';
+    em.textContent = 'Needs a couple of weeks with a mix of good and bad nights before this can say anything honest. Keep ticking and it will fill in.';
+    card.appendChild(em);
+    return card;
+  }
+  lines.forEach(l=>{
+    const row = document.createElement('div'); row.className='drow';
+    row.innerHTML = '<div class="dt">'+l.t+'</div>' +
+      '<div class="dn">'+l.verdict+' <span>'+l.n+'</span></div>';
+    card.appendChild(row);
+  });
+  return card;
+}
 function weeksTracked(){
   const set = new Set();
   Object.keys(history).forEach(k=> set.add(ymd(weekStartOf(ymdToDate(k)))));
@@ -1588,6 +1795,22 @@ function renderWeek(){
   Object.keys(plan).forEach(b=>{ if (order.indexOf(b) === -1) order.push(b); });
 
   const wrap = document.getElementById('buckets'); wrap.innerHTML = '';
+
+  /* Sunday is the planning block — lead with the week just gone */
+  if (selDay === 'Sun') wrap.appendChild(reviewCard());
+
+  /* what you should be doing this minute — only when today is on screen */
+  if (selDay === DAYS[now.getDay()]){
+    const rn = rightNow();
+    if (rn){
+      const strip = document.createElement('div'); strip.className='rnow'; strip.id='rnow';
+      strip.innerHTML = '<span class="rnclock">'+rn.clock+'</span>' +
+        '<span class="rnlabel">'+rn.label+'</span>' +
+        (rn.sub ? '<span class="rnsub">'+rn.sub+'</span>' : '');
+      wrap.appendChild(strip);
+    }
+  }
+
   wrap.appendChild(streakCard());
 
   const picks = nnList(selDay);
@@ -2141,6 +2364,8 @@ function renderProgress(){
     });
     wrap.appendChild(mc);
   }
+
+  wrap.appendChild(driverCard());
 
   /* longest streaks */
   const bc = document.createElement('div'); bc.className='pcard';
@@ -3776,6 +4001,16 @@ if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0){
     navigator.serviceWorker.register('sw.js').catch(function(){ /* offline is a bonus, never a blocker */ });
   });
 }
+
+/* refresh just the right-now strip each minute, without re-rendering the page */
+setInterval(function(){
+  const el = document.getElementById('rnow');
+  if (!el || view !== 'week') return;
+  const rn = rightNow(); if (!rn) return;
+  el.innerHTML = '<span class="rnclock">'+rn.clock+'</span>' +
+    '<span class="rnlabel">'+rn.label+'</span>' +
+    (rn.sub ? '<span class="rnsub">'+rn.sub+'</span>' : '');
+}, 30000);
 
 render();
 </script>
