@@ -1057,7 +1057,7 @@ function fixedPlan(day){
     Morning: { time:'flex', items:[
       ['Wake by 6:30 — keep the rhythm, gently', false, null, 'wake'],
       ['Make the bed', false, null, 'makebed'],
-      ['Devotional', false, null, 'devotional'],
+      ['Devotional', false, 'devo', 'devotional'],
       ['Workout', true, 'workout', 'workout'],
       ['Start a load of laundry', false, null, 'laundry-start']
     ]},
@@ -1076,7 +1076,7 @@ function fixedPlan(day){
       Morning: { time:'flex', items:[
         ['Wake by 6:30', false, null, 'wake'],
         ['Make the bed', false, null, 'makebed'],
-        ['Devotional', false, null, 'devotional'],
+        ['Devotional', false, 'devo', 'devotional'],
         ['Workout', false, 'workout', 'workout'],
         ['Start a load of laundry', false, null, 'laundry-start']
       ]},
@@ -1098,7 +1098,7 @@ function fixedPlan(day){
       ['Wake '+tf('wake')+' \u2014 feet on floor, no snooze', true, 'wake', 'wake'],
       ['Fold + put away laundry', false, null, 'laundry-fold'],
       ['Make the bed', false, null, 'makebed'],
-      ['Devotional', false, null, 'devotional'],
+      ['Devotional', false, 'devo', 'devotional'],
       ['Workout', true, 'workout', 'workout'],
       ['Wake James \u2014 '+tf('james'), false, null, 'wake-james'],
       ['Wake Bennett & Emma \u2014 '+tf('kids'), false, null, 'wake-kids'],
@@ -1451,6 +1451,9 @@ function saveWalkPlan(){ localStorage.setItem('mwl-walkplan', JSON.stringify(wal
 function getMeal(d){ return meals[d] || ''; }
 function setMeal(d,v){ meals[d]=v; localStorage.setItem('mwl-meals', JSON.stringify(meals)); }
 function getWorkout(d){ return workouts[d] || ''; }
+let devos = {};
+try { devos = JSON.parse(localStorage.getItem('mwl-devos') || '{}'); } catch(e){ devos = {}; }
+function getDevo(d){ return devos[d] || ''; }
 
 function dayProgress(day){
   const plan = fixedPlan(day);
@@ -1914,6 +1917,10 @@ function makeRow(item, inCard){
   if (special === 'workout'){
     const w = getWorkout(selDay);
     pull = w ? ' · <span class="pulled">'+w+'</span>' : ' · <span class="pullempty">set in Plan</span>';
+  }
+  if (special === 'devo'){
+    const v = getDevo(selDay);
+    pull = v ? ' · <span class="pulled">'+v+'</span>' : ' · <span class="pullempty">set in Plan</span>';
   }
   const core = (isAnchor ? '<span class="anchor">'+t+'</span>' : t);
   span.innerHTML = core + pull +
@@ -2583,15 +2590,17 @@ function renderPlan(){
 
   wrap.appendChild(planSection('Meals', meals, 'mwl-meals', 'What’s for dinner?'));
   wrap.appendChild(planSection('Workouts', workouts, 'mwl-workouts', 'e.g. MAX 20 Day 11', true));
+  wrap.appendChild(planSection('Devotionals', devos, 'mwl-devos', 'e.g. Psalm 23, or a study'));
   wrap.appendChild(renderInsights());
   const clearBtn = document.createElement('button'); clearBtn.className='wbtn';
   clearBtn.style.width='100%'; clearBtn.style.marginBottom='12px';
-  clearBtn.textContent = 'Clear meals & workouts';
+  clearBtn.textContent = 'Clear the week’s plan';
   clearBtn.onclick = ()=>{
-    if (!confirm('Clear this week’s meal and workout plan? Your checkmarks on the Week tab are untouched.')) return;
-    meals = {}; workouts = {};
+    if (!confirm('Clear this week’s meals, workouts and devotionals? Your checkmarks on the Week tab are untouched.')) return;
+    meals = {}; workouts = {}; devos = {};
     localStorage.setItem('mwl-meals', JSON.stringify(meals));
     localStorage.setItem('mwl-workouts', JSON.stringify(workouts));
+    localStorage.setItem('mwl-devos', JSON.stringify(devos));
     render();
   };
   wrap.appendChild(clearBtn);
