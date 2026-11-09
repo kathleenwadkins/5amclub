@@ -1724,39 +1724,68 @@ function gMonthStats(first){
 }
 
 /* ---- import from gainscal ---- */
-function gImport(){
-  const raw = prompt('Paste the gainscal export here:');
-  if (!raw) return;
-  let obj;
-  try { obj = JSON.parse(raw); } catch(e){ alert('That didn’t read as JSON. Copy the whole thing, including the outer { }.'); return; }
-  let added = 0, months = 0;
+/* Read whatever got pasted. Accepts a whole localStorage dump, an object
+   already keyed by month, a double-encoded string, or any of those wrapped in
+   stray quotes — a prompt box mangles enough of this that being fussy here
+   just means a dead end with no way to see what went wrong. */
+function gParseExport(raw){
+  let txt = String(raw == null ? '' : raw).trim();
+  if (!txt) return null;
+  if (txt.length > 1 && ((txt[0] === '"' && txt.slice(-1) === '"') || (txt[0] === "'" && txt.slice(-1) === "'"))){
+    let inner = null;
+    try { inner = JSON.parse(txt); } catch(err){}
+    txt = (typeof inner === 'string') ? inner : txt.slice(1, -1);
+  }
+  let obj = null;
+  try { obj = JSON.parse(txt); } catch(err){ return null; }
+  if (typeof obj === 'string'){ try { obj = JSON.parse(obj); } catch(err){ return null; } }
+  return (obj && typeof obj === 'object') ? obj : null;
+}
+/* Pull month tables out, however they're labelled. */
+function gMonthsFrom(obj){
+  const out = {};
   for (const k in obj){
-    const m = /^tpo-workouts-(\d{4}-\d{2})$/.exec(k);
-    if (!m) continue;
-    let days = obj[k];
-    if (typeof days === 'string'){ try { days = JSON.parse(days); } catch(e){ continue; } }
-    if (!days || typeof days !== 'object') continue;
-    months++;
+    let v = obj[k];
+    if (typeof v === 'string'){ try { v = JSON.parse(v); } catch(err){ continue; } }
+    if (!v || typeof v !== 'object') continue;
+    const m = /^(?:tpo-workouts-)?(\d{4}-\d{2})$/.exec(k);
+    if (m) out[m[1]] = v;
+  }
+  return out;
+}
+function gImport(raw){
+  const obj = gParseExport(raw);
+  if (!obj){
+    const peek = String(raw == null ? '' : raw).trim().slice(0, 48);
+    return { ok:false, msg: peek
+      ? 'That didn\u2019t read as JSON. It starts with: ' + peek + '\u2026 \u2014 looks like the wrong thing got copied.'
+      : 'Nothing pasted yet.' };
+  }
+  const months = gMonthsFrom(obj);
+  const keys = Object.keys(months);
+  if (!keys.length) return { ok:false, msg:'That parsed, but there are no workout months in it.' };
+  let added = 0;
+  keys.forEach(mk=>{
+    const days = months[mk];
     for (const dd in days){
-      const s = days[dd] || {};
+      const src = days[dd] || {};
       const e = {
-        t: s.title || '', ty: s.type || '', n: s.notes || '',
-        l: Array.isArray(s.links) ? s.links.filter(x=>x && (x.label || x.url)) : [],
-        d: !!s.done
+        t: src.title || '', ty: src.type || '', n: src.notes || '',
+        l: Array.isArray(src.links) ? src.links.filter(x=>x && (x.label || x.url)) : [],
+        d: !!src.done
       };
       if (gBlank(e)) continue;
-      if (!gains[m[1]]) gains[m[1]] = {};
-      gains[m[1]][dd] = e; added++;
+      if (!gains[mk]) gains[mk] = {};
+      gains[mk][dd] = e; added++;
     }
-  }
-  if (!months){ alert('No tpo-workouts-YYYY-MM keys in there — that doesn’t look like a gainscal export.'); return; }
+  });
   saveGains();
   for (const mk in gains){
     const parts = mk.split('-');
     for (const dd in gains[mk]) gSyncHistory(new Date(+parts[0], +parts[1]-1, +dd));
   }
-  alert('Brought over '+added+' day'+(added===1?'':'s')+' across '+months+' month'+(months===1?'':'s')+'.');
-  render();
+  return { ok:true, msg:'Brought over '+added+' day'+(added===1?'':'s')+' across '+
+    keys.length+' month'+(keys.length===1?'':'s')+'.' };
 }
 
 /* Ticking Workout on the Week tab marks that day done on the calendar too, so
@@ -4141,6 +4170,7 @@ let gMonthFirst = new Date(now.getFullYear(), now.getMonth(), 1);
 let gSel = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 /* undefined = follow whatever the day is linked to; null = she closed it */
 let gProgOpen;
+let gImportOpen = false;
 
 function gSetSlot(key, slot, field, val){
   if (!gainsLog[key]) gainsLog[key] = {};
@@ -4424,9 +4454,37 @@ function renderGains(){
   /* ---- import ---- */
   const imp = document.createElement('button'); imp.className='wbtn';
   imp.style.width='100%'; imp.style.marginBottom='10px';
-  imp.textContent = 'Import from gainscal';
-  imp.onclick = gImport;
+  imp.textContent = gImportOpen ? 'Hide the import box' : 'Import from gainscal';
+  imp.onclick = ()=>{ gImportOpen = !gImportOpen; render(); };
   wrap.appendChild(imp);
+  if (gImportOpen){
+    const box = document.createElement('section'); box.className='pcard';
+    box.innerHTML = '<h3>Import from gainscal</h3>';
+    const steps = document.createElement('div'); steps.className='exnote';
+    steps.innerHTML = 'On a computer: open gainscal in Chrome, press <b>&#8997;&#8984;J</b> for the '+
+      'console, paste the line below and hit return. Right-click the quoted result it prints and '+
+      'choose <b>Copy string contents</b>, then paste that into the second box.';
+    box.appendChild(steps);
+    const snip = document.createElement('textarea'); snip.className='gnote'; snip.rows=3;
+    snip.readOnly = true; snip.style.marginBottom = '12px';
+    snip.value = "JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([k])=>k.startsWith('tpo-workouts-'))))";
+    snip.onclick = ()=>{ snip.select(); };
+    box.appendChild(snip);
+    const ta = document.createElement('textarea'); ta.className='gnote'; ta.rows=5;
+    ta.placeholder = 'Paste what you copied here\u2026';
+    box.appendChild(ta);
+    const msg = document.createElement('div'); msg.className='exnote';
+    const go = document.createElement('button'); go.className='gbig';
+    go.textContent = 'Bring it over';
+    go.onclick = ()=>{
+      const r = gImport(ta.value);
+      if (!r.ok){ msg.textContent = r.msg; msg.style.color = '#d8336b'; return; }
+      gImportOpen = false; alert(r.msg); render();
+    };
+    box.appendChild(go);
+    box.appendChild(msg);
+    wrap.appendChild(box);
+  }
   const note = document.createElement('div'); note.className='exnote';
   note.style.textAlign='center';
   note.textContent = 'Marking a day done counts toward your workout streak. Leave a day blank on the Plan tab and the Week tab pulls the workout from here.';
