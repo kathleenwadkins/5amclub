@@ -278,6 +278,106 @@
     background:#fff; border:1px solid var(--line); border-radius:8px; padding:5px 8px; }
   .milesrow input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
 
+
+  /* ---------- gains ---------- */
+  .gnav { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px; }
+  .gnav > button { flex:none; width:34px; height:34px; border:1px solid var(--line);
+    background:var(--card); color:var(--accent); border-radius:11px; font-size:1rem;
+    font-weight:700; cursor:pointer; line-height:1; }
+  .gnav > button:active { background:var(--accent-soft); }
+  .gmo { font-size:0.98rem; font-weight:800; letter-spacing:-0.02em; }
+  .gsum { font-size:0.68rem; color:var(--muted); font-weight:600; }
+  .gcal { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+  .gdow { font-size:0.58rem; font-weight:700; color:var(--muted); text-align:center;
+    letter-spacing:0.06em; padding-bottom:3px; }
+  .gcell { aspect-ratio:1/1; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; gap:1px; border:1px solid var(--line); background:var(--card);
+    border-radius:10px; padding:0; cursor:pointer; font-family:inherit; transition:all .15s; }
+  .gcell.pad { border:none; background:none; cursor:default; }
+  .gcell .gn { font-size:0.74rem; font-weight:700; line-height:1; }
+  .gcell .gtk { font-size:0.6rem; line-height:1; color:var(--muted); }
+  .gcell.sel { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-soft); }
+  .gcell.today { border-color:var(--gold); }
+  .gcell.today .gn { color:var(--gold); }
+  .gleg { display:flex; flex-wrap:wrap; gap:4px; margin-top:12px; }
+  .gchip { font-size:0.56rem; font-weight:700; text-transform:uppercase;
+    letter-spacing:0.05em; border-radius:7px; padding:3px 7px; }
+
+  .gdayhead { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .gdayhead > div:first-child { display:flex; align-items:center; }
+  .gdnum { font-size:1.7rem; font-weight:800; color:var(--accent);
+    letter-spacing:-0.03em; margin-right:9px; line-height:1; }
+  .gdwk { font-size:0.95rem; font-weight:700; line-height:1.15; }
+  .gdwk small { display:block; font-size:0.54rem; font-weight:700; color:var(--muted);
+    letter-spacing:0.09em; }
+  .gshift { display:flex; gap:5px; }
+  .gshift button { width:30px; height:30px; border:1px solid var(--line); background:var(--card);
+    color:var(--accent); border-radius:9px; cursor:pointer; font-size:0.8rem; }
+  .gtitle { width:100%; font-family:inherit; font-size:0.95rem; font-weight:600; color:var(--ink);
+    background:#fff; border:none; border-bottom:1.5px solid var(--line); border-radius:0;
+    padding:7px 2px; margin-bottom:6px; }
+  .gtitle:focus { outline:none; border-bottom-color:var(--accent); }
+  .gplabel { font-size:0.68rem; text-transform:uppercase; letter-spacing:0.09em;
+    color:var(--muted); font-weight:700; margin:14px 0 8px; }
+  .gprogwrap { background:var(--accent-soft); border-radius:13px; padding:11px 12px; margin-top:12px; }
+  .gprogwrap .gplabel { margin-top:0; }
+  .gchips { display:flex; flex-wrap:wrap; gap:5px; }
+  .gpchip { font-size:0.65rem; font-weight:700; border:1px solid var(--line); background:var(--card);
+    color:var(--accent); border-radius:999px; padding:5px 11px; cursor:pointer; font-family:inherit; }
+  .gpchip.on { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .gdays { display:grid; grid-template-columns:repeat(10,1fr); gap:3px; margin-top:8px; }
+  .gdays button { padding:6px 0; border:1px solid var(--line); background:var(--card);
+    color:var(--accent); border-radius:7px; font-size:0.66rem; font-weight:700;
+    cursor:pointer; font-family:inherit; }
+  .gdays button.on { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .grounds { display:flex; gap:5px; margin-top:7px; align-items:center; }
+  .grounds button { font-size:0.62rem; font-weight:700; text-transform:uppercase;
+    letter-spacing:0.05em; border:1px solid var(--line); background:var(--card);
+    color:var(--accent); border-radius:999px; padding:5px 11px; cursor:pointer; font-family:inherit; }
+  .grounds button.on { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .grounds button:disabled { opacity:.35; cursor:default; }
+  .gunlink { margin-left:auto; }
+  .gexwrap { margin-top:11px; background:var(--card); border-radius:11px; padding:10px 11px; }
+  .gexhead { display:flex; justify-content:space-between; align-items:baseline; gap:8px;
+    font-size:0.74rem; font-weight:700; color:var(--accent); margin-bottom:4px; }
+  .gexcount { font-size:0.62rem; font-weight:600; color:var(--muted); white-space:nowrap; }
+  .gexblock { font-size:0.56rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;
+    color:var(--muted); padding:9px 0 3px; }
+  .gexrow { display:flex; align-items:center; gap:8px; padding:5px 0; border-top:1px solid var(--line); }
+  .gexname { flex:1; font-size:0.78rem; line-height:1.3; }
+  .gexsets { display:flex; gap:4px; flex:none; }
+  .gexset { display:flex; gap:2px; }
+  .gexset input { width:38px; font-family:inherit; font-size:0.7rem; text-align:center;
+    color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:7px; padding:4px 2px; }
+  .gexset input:focus { outline:none; border-color:var(--accent); }
+  .gtypes { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; }
+  .gtypes button { padding:9px 2px; border:none; border-radius:10px; font-family:inherit;
+    font-size:0.68rem; font-weight:700; cursor:pointer; }
+  .gnote { width:100%; font-family:inherit; font-size:0.85rem; color:var(--ink); background:#fff;
+    border:1px solid var(--line); border-radius:9px; padding:8px 10px; resize:vertical; }
+  .gnote:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+  .glinkrow { display:flex; align-items:center; gap:8px; padding:5px 0; }
+  .glinkrow a { flex:1; font-size:0.78rem; color:var(--accent); }
+  .glinkrow button { border:none; background:none; color:#b6acc2; font-size:0.72rem; cursor:pointer; }
+  .gaddlink { width:100%; margin-top:4px; border:1px dashed var(--line); background:none;
+    color:var(--muted); font-family:inherit; font-size:0.72rem; font-weight:600;
+    border-radius:9px; padding:7px 12px; cursor:pointer; }
+  .gbig { width:100%; margin-top:14px; padding:12px; border:none; border-radius:12px;
+    background:var(--accent); color:#fff; font-family:inherit; font-size:0.84rem;
+    font-weight:700; cursor:pointer; }
+  .gbig.on { background:#0f8f55; }
+  .gacts { display:flex; gap:7px; margin-top:8px; }
+  .gacts button { flex:1; }
+  .garch { display:flex; justify-content:space-between; align-items:baseline; gap:8px;
+    font-size:0.78rem; font-weight:700; padding:12px 0 6px; }
+  .garcgrid { display:grid; grid-template-columns:repeat(5,1fr); gap:5px; margin-bottom:4px; }
+  .garcgrp { display:flex; align-items:center; gap:2px; }
+  .garclb { font-size:0.56rem; font-weight:700; color:var(--muted); width:19px; flex:none; }
+  .garccell { flex:1; text-align:center; font-size:0.52rem; font-weight:700; color:#b6acc2;
+    background:#f4eff7; border-radius:5px; padding:4px 0; }
+  .garccell.sched { background:var(--accent-soft); color:var(--accent); }
+  .garccell.done { background:var(--accent); color:#fff; }
+
   /* ---------- work ---------- */
   .waiting { background:linear-gradient(135deg,#6d2fb8,#a32f9e 55%,#e0457b); color:#fff;
     border-radius:16px; padding:16px; margin-bottom:14px; box-shadow:var(--shadow);
@@ -679,6 +779,7 @@
   <button id="tabRogue">Rogue</button>
   <button id="tabAll">Tasks</button>
   <button id="tabProg">Stats</button>
+  <button id="tabGains">Gains</button>
   <button id="tabFood">Food</button>
   <button id="tabWork">Work</button>
 </div>
@@ -702,6 +803,7 @@
 </div>
 
 <div id="progView" style="display:none"></div>
+<div id="gainsView" style="display:none"></div>
 <div id="foodView" style="display:none"></div>
 <div id="planView" style="display:none"></div>
 <div id="workView" style="display:none"></div>
@@ -1450,10 +1552,226 @@ try { walkPlan = JSON.parse(localStorage.getItem('mwl-walkplan') || '{}'); } cat
 function saveWalkPlan(){ localStorage.setItem('mwl-walkplan', JSON.stringify(walkPlan)); }
 function getMeal(d){ return meals[d] || ''; }
 function setMeal(d,v){ meals[d]=v; localStorage.setItem('mwl-meals', JSON.stringify(meals)); }
-function getWorkout(d){ return workouts[d] || ''; }
+function getWorkout(d){ return workouts[d] || gainsTitle(d); }
 let devos = {};
 try { devos = JSON.parse(localStorage.getItem('mwl-devos') || '{}'); } catch(e){ devos = {}; }
 function getDevo(d){ return devos[d] || ''; }
+
+/* ===== Winter Arc program library =====
+   Lifted straight from the gainscal build, which transcribed it from
+   Winter_Arc_2026.pdf. day: [buyIn, blocks]; buyIn: [name, fields] where
+   fields is 'w' | 'r' | 'wr' | ''; block: [label, sets, unit, exercises]. */
+  const G_WR = 'Weight + Reps', G_R = 'Reps', G_W = 'Weight';
+  const WINTER_ARC = [
+    { id: 's20', name: 'Strong 20', match: 'strong', days: [
+      [null, [['Circuit 1', 2, G_WR, ['Staggered DL + Clean Squat', 'Back Rows + Squat Switch', 'SL Deadlift Hinge + SA Row']], ['Circuit 2', 2, G_WR, ['Split Lunge', 'Back Fly', 'Lunge Hold, Back Fly, Back Foot Tap-In']], ['Burnout', 1, G_R, ['Row, Row & Clean Squat / Glute Bridge & DB Pullover']]]],
+      [null, [['Exercise', 3, G_WR, ['Push-Up + 2 Arm Reaches', 'DB Press-Out + 4 Bus Drivers', 'SA Rev Grip Back Row + Bicep Curl + Rotational', 'Half Curl + L-Fly', 'DB Punches', 'Floor Press + Skull Crushers', 'Tricep Dips']]]],
+      [null, [['Block 1', 1, G_WR, ['Back or Goblet Squat', 'Back or Goblet Squat + Alt Side Leg Lift', 'Adv. Clamshell + Side Plank Hold - R', 'Squat + Alt Side Step', 'Side-to-Side Squat Thruster', 'Adv. Clamshell + Side Plank Hold - L']], ['Block 2', 1, G_WR, ['Deadlift', 'Alt Prisoner Squat into Goblet Squat', 'Alt Leg Lowers', 'Staggered Deadlift - R', 'Donkey Kick - R', 'Staggered Deadlift - L', 'Donkey Kick - L']], ['Block 3', 1, G_WR, ['DB Glute Bridge', 'Rev Crunch Kick-Out + Bridge + Reach Back']]]],
+      [null, [['Exercise · Set 3 optional', 3, G_WR, ['Goblet Hold March', 'Front Lunge + Press Out + Knee Drive + Overhead Press', 'SL Deadlift + DB Pass', 'Diagonal Lift', 'Alt Lat Lunge + Halo', 'Rotational Lunge + Press', 'Snatch + Overhead March']]]],
+      [null, [['Exercise', 3, G_WR, ['Alt Squat Thruster', 'SA Back Row + Snatch', 'DL Clean + Lunge', 'Bicep Curls + Shoulder Press', 'Curtsy Lunge + DB Pass', 'Chest Presses + Leg Lowers', 'Plank + Knee Drive + Army Crawl']]]],
+      [null, [['Exercise · Bonus: 10 push-ups', 2, G_WR, ['Squats', 'Squats + Lat Lunge', 'DB Chest Press', 'Alt Rev Chest Press', 'Staggered DL', 'Staggered DL + Rev Lunge', 'Chest Fly', 'Narrow Floor Press + Chest Fly']], ['Burnout', 1, G_R, ['Push-Up + Burpee Step In + 2 Squats / Chest Press + Glute Bridge']]]],
+      [null, [['Exercise', 3, G_WR, ['SA Back Fly', 'Standing Chest Fly', 'Upright Rows', 'Stack on Row, Clean, + Press', 'Back Row + Tricep Kickback', 'DB Pullover + Skull Crushers', 'Kneeling 1/2 Bicep Curls']], ['Burnout', 1, G_R, ['Plank & Row + Bear Crawl Rows']]]],
+      [null, [['Block 1', 1, G_WR, ['Squat + Squat Hold', 'Squat + Alt Rev Lunge', 'Kneeling Hip Thrust + DB Pass']], ['Block 2', 1, G_WR, ['Lat Lunge with Glider - R', 'Lat Lunge with Glider - L', 'Side Plank Hold + Knee Tucks']], ['Block 3', 1, G_WR, ['Deadlift to Alt Front Lunge', 'Low Lunge Step Ins', 'Bear Crawl Hold + Bear to Downdog Lift']], ['Block 4', 1, G_WR, ['Sumo Squat + Heel Lift', 'Sumo Squat Deadlift Roll', 'Wall Sit + DB Pass']], ['Block 5', 1, G_WR, ['Kneeling Hip Thrust + Add. Kick Out - R', 'Kneeling Hip Thrust + Add. Kick Out - L', 'Runner Crunches']]]],
+      [null, [['Exercise 1', 2, G_W, ['One Arm Front Rack + One Arm Overhead March', 'Side Squat to SL Thruster', 'Double Leg Deadlift to SL Knee Drive + Overhead Press']], ['Exercise 2', 2, G_W, ['SL Deadlift + Diagonal Lift + Knee Drive - R', 'Plank Sprinter Step Ins', 'SL Deadlift + Diagonal Lift + Knee Drive - L']], ['Exercise 3', 2, G_W, ['Windmill', 'Lat Bear Crawl Walk', 'Alt Front Lunge + Twist + Halo']], ['Exercise 4', 2, G_W, ['SL Balance Curl Press', 'Dumbell Chop + Squat + Press + Pass', 'Hold the World + Rev Crunch']]]],
+      [null, [['Exercise', 3, G_WR, ['Back Rows, Clean, + Uneven Front Squat Thrusters', 'Staggered DLs + Balance Bicep Curls', 'Split Lunges + Split Lunges with Front Raises', 'Lat Side Step Squats + Overhead Triceps', 'Snatches + Push-Ups', 'Uneven Hold the World, Rev Crunch, + DB Pass', 'Shuffle + Squat DB High Pulls']]]]
+    ]},
+    { id: 'o30', name: 'Overload 30', match: 'overload', days: [
+      [['Squat Clean + Squat Thruster', 'wr'], [['Exercise', 4, G_WR, ['Eccentric Squat', 'Staggered Squat', 'Reverse Lunge', 'Curtsy Lunge', 'Sumo Squat', 'Lat. Squat']], ['HIIT Burnout', 1, G_R, ['Frog Jumps / Lunge Drops']]]],
+      [['Push-Ups', 'r'], [['Exercise', 3, G_WR, ['Chest Press', 'Chest Fly', 'Arnold Press', 'Lat. Raise', 'Overhead Tricep Extensions', 'Tricep Dips']], ['Core Exercise · after set 2', 1, G_R, ['Reverse Crunch + Hip Lift', 'Dumbell Drag', 'Reverse Crunches']], ['HIIT Burnout', 1, G_R, ['Chest to Floor Burpees / High Knees']]]],
+      [['Deadlift + Clean', 'wr'], [['Exercise', 3, G_WR, ['Deadlift', 'DL + Clean + Side Step Squat', 'Glute Biased Squats', 'Staggered DL', 'Split Lunge + Split DL', 'Alt Dumbbell Snatches', 'Dumbbell Hip Thrusts', 'Hip Thrust Isometric Hold']], ['HIIT Burnout', 1, G_R, ['Box Jumps / Skaters']]]],
+      [['Pull-Ups', 'r'], [['Exercise', 3, G_WR, ['Flip Grip Bicep Curl', 'Single Arm Conc. Curl', 'Back Row', 'Single Arm Back Fly', 'Goblet Curl', 'Pull-Ups']], ['Core Exercise · after set 2', 1, G_R, ['Step Through Wood Chop R', 'Step Through Wood Chop L', 'Seated Twist']], ['HIIT Burnout', 1, G_R, ['Burpee + Lat. Hop / Jumping Jacks']]]],
+      [['Forearm Plank', ''], [['Exercise', 3, G_WR, ['Squat + Rotational Clean', 'Bicep Curl + Shoulder Press', 'Front Lunge + 45 Lunge', 'Uneven Push-Ups + Beast Back Rows', 'Kneel Hinge Clean to Half Kneel Front Rack Stand', 'Slow Dumbbell Burpee']], ['Core Burnout', 1, G_R, ['½ Kneeling to Side Plank with Add. Kick Out Right', 'Weighted Get Up Off the Ground', '½ Kneeling to Side Plank with Add. Kick Out Left']], ['HIIT Burnout', 1, G_R, ['Squat Jacks / Mountain Climbers']]]],
+      [['Weighted Step-Ups', 'wr'], [['Exercise', 3, G_WR, ['Heels Up Squats', 'Lat. Lunges', 'Lat. Step-Up', 'Deficit Split Lunge + Knee Drive', 'Heel Drop Calf Raise', 'Walking Lunges']], ['HIIT Burnout', 1, G_R, ['180 Surfer Squat Jumps / Plate Single Leg Lat. Hops']]]],
+      [['DB Front Raise + Standing Press', 'wr'], [['Exercise', 3, G_WR, ['Narrow Chest Press', 'Rotational Chest Fly', 'Alternating Shoulder Press', 'Half Rainbow Front Raises', 'Straight Arm Press Backs', 'Skull Crushers']], ['HIIT Burnout', 1, G_R, ['Fast Feet + Burpee / Lat. Shuffle']]]],
+      [['Hamstring Curls', 'r'], [['Exercise', 4, G_WR, ['Sumo Deadlift', 'Sumo DL + Clean Squat', 'Rear Foot Elevated DL', 'Bulgarian Split Squat', 'DL + Clean to Knee Drive']], ['HIIT Burnout', 1, G_R, ['Box Jumps to Single Leg Land / Dumbbell Swings']]]],
+      [['Banded Face Pulls', 'r'], [['Exercise', 3, G_WR, ['Pull-Ups or Chin-Ups', 'Incline Plank + Row', '15 Count Bicep Curls', 'Hammer Curls', 'Bird Dog Single Arm Wide Row', 'Wide Bicep Curls']], ['HIIT Burnout', 1, G_R, ['Heisman Runners / Loaded Squat Jacks']]]],
+      [['Squat to Alternating Snatch', 'wr'], [['Exercise', 3, G_WR, ['Narrow + Wide Squats', 'Staggered DL Snatch + Push Press', 'Push-Ups + Copenhagen Plank Hold', 'Alt Curtsy Lunges + Back Rows', '½ Kneeling Chopper', 'Single Leg Glute Bridge + Skull Crushers']], ['HIIT Burnout', 1, G_R, ['Ranger Burpees / Frog Jumps']]]]
+    ]},
+    { id: 'b30', name: 'Build 30', match: 'build', days: [
+      [['Squat to Alternating Overhead Press', 'w'], [['Exercise', 3, G_WR, ['Eccentric Squats', 'Back Row + Clean + Split Lunge', 'Snatch Rack + Pivot Squat Thruster', 'Lateral Lunge + Front Raise', 'Squat to Alt Clean + Alt Thruster', 'Bicep Curls + Curtsy Lunges', 'Lunge Swing + SA Shoulder Press R/L', 'Sumo Deadlift + Back Row + Squats']], ['Burnout Ladder', 1, G_R, ['Squat to Alternating Overhead Press / Squat Hold']]]],
+      [['Push Ups', ''], [['Circuit 1', 2, G_WR, ['Chest Fly', 'Alt Chest Press + Narrow Press', 'Chest Press with Rotation']], ['Circuit 2', 2, G_WR, ['Tricep Kickback', 'Tricep Dips', 'Shoulder Press + Overhead Extension']], ['Circuit 3', 2, G_WR, ['Standard + Wide Bicep Curls', 'Hammer Curl + Alt Press Out', 'Standing Chest Flys + Bicep Curls']], ['Burnout Ladder', 1, G_R, ['Push Up Burpee / Plank Hold']]]],
+      [['Loaded Single Sided Skater', 'w'], [['Circuit 1', 2, G_WR, ['Dumbbell Halo + Diagonal Chop', 'Lateral Hop + Reach Across', 'Plank DB Pull-Through + Bodysaw']], ['Circuit 2', 2, G_WR, ['High Knees + 45 Front Lunge', 'Squat Thrust + Front Raise Lower', 'Loaded Lateral Heismans']], ['Circuit 3', 2, G_WR, ['Reverse Crunch + Twist', 'Sprinter Sit-Up + Double Punch', 'Side Plank Hold']], ['Burnout Ladder', 1, G_R, ['Skater Chops / Dumbbell Halo + Diagonal Chop']]]],
+      [['Banded Squat + Rear Leg Lift', ''], [['Exercise', 3, G_WR, ['Split Lunge R/L', 'Split Lunge + SL DL R/L', '1.5 DL Clean + 1.5 Squat', "Stagg'd DL R/L", "Stagg'd Good Morn + Lat Lunge R/L", "Stagg'd Swing + Lat Squat R/L", 'Calf Raise DB Rot + Back Squeeze', 'Donkey Kick R/L', 'Supine Hamstring Hold R/L']], ['Burnout Ladder', 1, G_R, ['Banded Squat Jacks / Banded Alt. Rear Leg Lifts']]]],
+      [['Suitcase Swings', 'w'], [['Exercise', 3, G_WR, ['Bicep Curls', 'Goblet Squat + Staggered Squat', 'Seated Side-to-Side Knee Tucks', 'Pendulum Lunge', 'Push-Up + Plank Row', 'Sit-Up + Seated Dbl Leg Toe Touch', 'Shoulder Press + Overhead Triceps', 'Snatch + Rack + Rot. Lunge', 'Hip Lifts']], ['Burnout Ladder', 1, G_R, ['Suitcase Swings / Overhead March']]]],
+      [['Push Press', 'w'], [['Exercise 1', 2, G_W, ['Back Rows', 'L-Stance Squat + SA Row', 'Flip Grip Bicep Curls']], ['Exercise 2', 2, G_W, ['Lunge + H. Curl + Stand + Ecc. Bicep Curl Lower', 'Alt Tricep Kickbacks', '1/2 Overhead Tricep Hold + Calf Raises']], ['Exercise 3', 2, G_W, ['Lateral Raises', 'Snatch + Press', 'Standing Chest Flys']], ['Exercise 4', 2, G_W, ['Push-Up + Deadlift', 'Rotational Chest Press', 'SA Chest Press + SL Glute Bridge + Overhead Pull']], ['Burnout Ladder', 1, G_R, ['Press Jacks / Overhead Triceps']]]],
+      [['Frog Jumps', ''], [['Exercise', 3, G_WR, ['Triple Tension Heel Elev. Squat', 'Bulgarian Split Squat', "Curtsy to Stagg'd to Curtsy Lunge", 'Heel Elevated Lateral Squat', 'Step Ups', 'Sumo DL + Clean Squat', 'SL Squat + Lateral Lunge', '1.5 SL Hip Thrust']], ['Burnout Ladder', 1, G_R, ['Squat + Squat Jump / Wall Sit']]]],
+      [['Mountain Climbers', ''], [['Circuit 1', 2, G_WR, ['Diagonal Chop + Tap Back', 'Narrow to Wide Squat Jacks', 'Down Dog DB Transfer + Push-Up']], ['Circuit 2', 2, G_WR, ['Loaded Lat Shuffle + DB Reach Across', 'Rev Lunge + Rotate + Knee Drive + Rotate', 'Broad Jump + Bear Crawl Back']], ['Circuit 3', 2, G_WR, ['Around the World Towel Slams', 'Double Crunch', 'DB Sit-Up + Side-to-Side Chop']], ['Burnout Ladder', 1, G_R, ['8 Mtn Climbers + 8 High Knees / Hollow Rock Knee Tucks']]]],
+      [['Back Row + Clean', 'w'], [['Exercise', 3, G_WR, ['Alt Neutral Press', 'Rev Back Fly + Straight Arm Pull Back', 'Upright Row + Clean + Press', 'Incline Plank + SA Row', 'Kneeling Y-Flys', 'Bird Dog SA Back Row', 'Uneven Push-Up + Shoulder Tap', 'Dumbbell Pullovers']], ['Burnout Ladder', 1, G_R, ['Back Row + Clean + Press / Superman']]]],
+      [['Dumbbell Burpees', 'w'], [['Exercise', 3, G_WR, ['Kang Squat + Swing', 'Uneven Squat + Hammer Curl Switch', "Alt Stagg'd DL + Clean + Press", 'Lat Lunge + Back Row + Balance Clean', 'Snatch + Rack + 2 Split Lunges', 'Glute Bridge March + SL Skull Crushers', 'Comando Climbers']], ['Burnout Ladder', 1, G_R, ['Dumbbell Burpees / Push-Ups + Squat Hold']]]]
+    ]},
+    { id: 'a25', name: 'Athlete 25', match: 'athlete', days: [
+      [['Ground to Overhead Jumps', ''], [['Exercise A', 3, G_WR, ['Deadlifts', 'Pull-Ups', 'Split Lunge']], ['Power & Core', 1, G_R, ['Broad Jumps / Beast Back Row']], ['Exercise B', 3, G_WR, ['Squats', 'Single Arm Row', 'Lateral Lunge']]]],
+      [['Push-Up + Shoulder Tap', ''], [['Exercise A', 3, G_WR, ['Shoulder Press', 'Overhead Triceps', 'Chest Press']], ['Burnout', 1, G_R, ['Burpees']], ['Exercise B', 3, G_WR, ['Lateral Raises', 'Skull Crushers', 'Chest Fly']], ['Burnout', 1, G_R, ['Burpees / Plank Hold']]]],
+      [['Banded Side-to-Side Squats', ''], [['Exercise', 3, G_WR, ['Banded Squats', 'Bulgarian Lunges', 'Single Leg Deadlift', 'Lateral Squat', 'Hip Thrust', 'Calf Raises', 'Pogo Bounds', 'Lateral Shuffles']]]],
+      [['Plank Double Knee Tucks', ''], [['Exercise', 3, G_R, ['In/Out Runs', 'Push-Up, Open to T, Lateral Walk', 'Hop Forward & High-Knees Back', 'Bear Crawl', 'Lateral Heisman Tap Down & Sprint', 'Plank Star Taps', 'Double Leg Hops In/Out', 'Hollow Rock Bicycles']]]],
+      [['Dumbbell Snatches', 'w'], [['Exercise', 3, G_WR, ['Wide Squat', 'Push-Up + Back Row', 'Deadlift', 'Bicep Curls', 'Walking Lunges', 'Dumbbell Burpees']]]],
+      [['Lateral Bound + Jump', ''], [['Exercise A', 3, G_WR, ['Heels-Up Squat', 'Chest Press', 'Step Ups']], ['Power & Core', 1, G_R, ['Box Jumps / Push-Ups']], ['Exercise B', 3, G_WR, ['Curtsy Lunge', 'Chest Fly', 'Hamstring Glute Bridge']]]],
+      [['SA Row + Snatch', 'w'], [['Exercise A', 3, G_WR, ['Pull-Ups', 'Bicep Curl', 'Reverse Grip Row']], ['Burnout', 1, G_R, ['Burpee + Back Row']], ['Exercise B', 3, G_WR, ['Conc Curl - R', 'Back Fly', 'Conc Curl - L']], ['Burnout', 1, G_R, ['Burpee + Back Row / Bicep Curls']]]],
+      [['Banded Skaters', ''], [['Exercise', 3, G_WR, ['Switch Stance Squat', 'Deficit Lunge + Knee Drive', 'Toes Elevated Deadlift', 'Single Leg Calf Raise', 'Pivot Cossack', 'Dumbbell Swing', 'Lunge Jumps', 'Skaters']]]],
+      [['Plank Wide Climbers', ''], [['Exercise', 3, G_R, ['Double Hop to Lateral Hop', 'Side-to-Side Push-Up', 'Wide/Narrow Runs/Hops', 'Plank Sprinter', 'Single Leg Lateral Hops', 'Lateral Bear Crawl', '2 Forward & 1 Back Runs', 'Hollow Rock Double Crunch']]]],
+      [['Squat Thrusters', 'w'], [['Exercise', 3, G_WR, ['Goblet Squat', 'Push Press', 'Deadlift + Calf Raise', 'Overhead Tricep Extension', '45-Degree Front Lunge', 'Ranger Burpee']], ['Burnout', 1, G_R, ['Squat Jumps / Push-Ups / Farmer\'s March']]]]
+    ]}
+  ];
+
+/* ================= gains — the workout calendar ================= */
+/* Day types. [name, ink, wash] — kept in the planner's palette, not gainscal's. */
+const GTYPES = [
+  ['Strength',     '#d8336b', '#fde8ef'],
+  ['Combo',        '#d9701e', '#fdeee0'],
+  ['Walk',         '#9a7400', '#fbf3d8'],
+  ['Pilates/Yoga', '#7a4fd0', '#efe9fd'],
+  ['Cardio',       '#0f8f55', '#e2f6ec'],
+  ['Rest',         '#2f72c9', '#e6eefc']
+];
+function gType(n){ for (let i=0;i<GTYPES.length;i++) if (GTYPES[i][0]===n) return GTYPES[i]; return null; }
+
+/* mwl-gains: { "2026-11": { "8": {t,ty,n,l,d,p} } }
+   t title · ty day type · n notes · l links · d done · p {id,di,r} linked program session
+   mwl-gainslog: { "s20|3|1": { "2|0": {w,r} } }  — program|dayIndex|round → slot|set */
+let gains = {};
+try { gains = JSON.parse(localStorage.getItem('mwl-gains') || '{}'); } catch(e){ gains = {}; }
+function saveGains(){ localStorage.setItem('mwl-gains', JSON.stringify(gains)); }
+let gainsLog = {};
+try { gainsLog = JSON.parse(localStorage.getItem('mwl-gainslog') || '{}'); } catch(e){ gainsLog = {}; }
+function saveGainsLog(){ localStorage.setItem('mwl-gainslog', JSON.stringify(gainsLog)); }
+
+function gmKey(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function gGet(d){ const m = gains[gmKey(d)]; return (m && m[String(d.getDate())]) || null; }
+function gBlank(e){
+  return !e || (!e.t && !e.ty && !e.n && !(e.l && e.l.length) && !e.d && !e.p);
+}
+function gPut(d, e){
+  const k = gmKey(d), dd = String(d.getDate());
+  if (gBlank(e)){ if (gains[k]) delete gains[k][dd]; }
+  else { if (!gains[k]) gains[k] = {}; gains[k][dd] = e; }
+  if (gains[k] && !Object.keys(gains[k]).length) delete gains[k];
+  saveGains();
+}
+function gEdit(d, patch){
+  const cur = gGet(d) || {t:'', ty:'', n:'', l:[], d:false};
+  const e = {};
+  for (const k in cur) e[k] = cur[k];
+  for (const k in patch) e[k] = patch[k];
+  gPut(d, e);
+  gSyncHistory(d);
+}
+
+/* ---- streak feed ----
+   A Gains day that's marked done counts as a workout, the same as ticking
+   Workout on the Week tab. Rest days don't count. Writing here is
+   upgrade-only — it can set w, never clear it — which is the same rule that
+   keeps "Reset week" from eating the streak. For days inside the current
+   week, dayFacts() does the work instead, so snapshotToday can't stomp it. */
+function gCounts(e){ return !!(e && e.d && e.ty !== 'Rest'); }
+function gSyncHistory(d){
+  if (!gCounts(gGet(d))) return;
+  const key = ymd(d);
+  const prev = history[key] || {p:0,w:false,k:false,b:false,dn:0,tt:0};
+  if (prev.w) return;
+  prev.w = true; history[key] = prev;
+  localStorage.setItem('mwl-history', JSON.stringify(history));
+}
+function gDoneOnWeekday(dn){ return gCounts(gGet(dateFor(dn))); }
+/* What the Week tab's Workout row shows when the Plan tab is left blank. */
+function gainsTitle(dn){ const e = gGet(dateFor(dn)); return e ? (e.t || e.ty || '') : ''; }
+
+/* ---- programs ---- */
+function gProg(id){ for (let i=0;i<WINTER_ARC.length;i++) if (WINTER_ARC[i].id===id) return WINTER_ARC[i]; return null; }
+/* Flatten one program day into loggable rows. */
+function gSlots(prog, di){
+  const day = prog.days[di]; if (!day) return [];
+  const rows = [], buyIn = day[0], blocks = day[1] || [];
+  if (buyIn) rows.push({ head:'Buy-in', name:buyIn[0], sets:1, unit:buyIn[1]==='wr'?WR:buyIn[1]==='w'?W:buyIn[1]==='r'?R:'' });
+  blocks.forEach(b=>{
+    b[3].forEach((name,i)=>{
+      rows.push({ head: i===0 ? b[0] : '', name:name, sets:b[1], unit:b[2] });
+    });
+  });
+  return rows;
+}
+function gLogKey(p){ return p.id+'|'+p.di+'|'+p.r; }
+function gLogged(p){
+  const bag = gainsLog[gLogKey(p)] || {};
+  let n = 0;
+  for (const k in bag){ const v = bag[k]; if (v && (v.w || v.r)) n++; }
+  return n;
+}
+function gLogTotal(prog, di){
+  let n = 0; gSlots(prog, di).forEach(s=>{ if (s.unit) n += s.sets; });
+  return n;
+}
+/* Sessions across the whole arc: 10 days x 2 rounds. */
+function gArcStats(pid){
+  const seen = {};
+  for (const mk in gains){
+    const m = gains[mk];
+    for (const dd in m){
+      const e = m[dd];
+      if (!e.p || e.p.id !== pid) continue;
+      const k = e.p.di+'|'+e.p.r;
+      if (e.d) seen[k] = 2; else if (!seen[k]) seen[k] = 1;
+    }
+  }
+  let done = 0, sched = 0;
+  for (const k in seen){ if (seen[k]===2) done++; else sched++; }
+  return { done:done, sched:sched, total:20, seen:seen };
+}
+function gMonthStats(first){
+  const m = gains[gmKey(first)] || {};
+  let planned = 0, done = 0;
+  for (const dd in m){ const e = m[dd]; if (e.ty==='Rest') continue; planned++; if (e.d) done++; }
+  return { planned:planned, done:done };
+}
+
+/* ---- import from gainscal ---- */
+function gImport(){
+  const raw = prompt('Paste the gainscal export here:');
+  if (!raw) return;
+  let obj;
+  try { obj = JSON.parse(raw); } catch(e){ alert('That didn’t read as JSON. Copy the whole thing, including the outer { }.'); return; }
+  let added = 0, months = 0;
+  for (const k in obj){
+    const m = /^tpo-workouts-(\d{4}-\d{2})$/.exec(k);
+    if (!m) continue;
+    let days = obj[k];
+    if (typeof days === 'string'){ try { days = JSON.parse(days); } catch(e){ continue; } }
+    if (!days || typeof days !== 'object') continue;
+    months++;
+    for (const dd in days){
+      const s = days[dd] || {};
+      const e = {
+        t: s.title || '', ty: s.type || '', n: s.notes || '',
+        l: Array.isArray(s.links) ? s.links.filter(x=>x && (x.label || x.url)) : [],
+        d: !!s.done
+      };
+      if (gBlank(e)) continue;
+      if (!gains[m[1]]) gains[m[1]] = {};
+      gains[m[1]][dd] = e; added++;
+    }
+  }
+  if (!months){ alert('No tpo-workouts-YYYY-MM keys in there — that doesn’t look like a gainscal export.'); return; }
+  saveGains();
+  for (const mk in gains){
+    const parts = mk.split('-');
+    for (const dd in gains[mk]) gSyncHistory(new Date(+parts[0], +parts[1]-1, +dd));
+  }
+  alert('Brought over '+added+' day'+(added===1?'':'s')+' across '+months+' month'+(months===1?'':'s')+'.');
+  render();
+}
+
+/* Ticking Workout on the Week tab marks that day done on the calendar too, so
+   the two can't disagree. One way on purpose: unticking never erases a logged
+   workout, and this never invents a calendar entry that isn't already there. */
+function gSyncFromWeek(){
+  let changed = false;
+  DAYS.forEach(dn=>{
+    if (!state[anchorKey('workout', dn)]) return;
+    const e = gGet(dateFor(dn));
+    if (!e || e.d) return;
+    e.d = true; changed = true;
+  });
+  if (changed) saveGains();
+}
 
 function dayProgress(day){
   const plan = fixedPlan(day);
@@ -1472,7 +1790,7 @@ function dowKey(d){ return DAYS[d.getDay()]; }
 
 function dayFacts(day){
   return {
-    workoutDone: !!state[anchorKey('workout',day)],
+    workoutDone: !!state[anchorKey('workout',day)] || gDoneOnWeekday(day),
     wakeDone: !!state[anchorKey('wake',day)],
     bedDone: !!state[anchorKey('bed',day)]
   };
@@ -2399,14 +2717,16 @@ function planSwap(store, lsKey, a, b){
   const t = store[a]||''; store[a] = store[b]||''; store[b] = t;
   localStorage.setItem(lsKey, JSON.stringify(store));
 }
-function planSection(title, store, lsKey, ph, showMiles){
+function planSection(title, store, lsKey, ph, showMiles, phFn){
   const sec = document.createElement('section'); sec.className='pcard';
   sec.innerHTML = '<h3>'+title+'</h3>';
   DAYS.forEach((dn,idx)=>{
     const r = document.createElement('div'); r.className='planrow';
     const lb = document.createElement('span'); lb.className='mealday'; lb.textContent=dn;
     const inp = document.createElement('input'); inp.type='text'; inp.className='mealin';
-    inp.placeholder=ph; inp.value=store[dn]||'';
+    const alt = phFn ? phFn(dn) : '';
+    inp.placeholder = alt ? alt + '  (from Gains)' : ph;
+    inp.value=store[dn]||'';
     inp.oninput = ()=>{ store[dn]=inp.value; localStorage.setItem(lsKey, JSON.stringify(store)); };
     const ctrl = document.createElement('div'); ctrl.className='planctrl';
     const up = document.createElement('button'); up.innerHTML='&#9650;'; up.disabled = idx===0;
@@ -2589,7 +2909,7 @@ function renderPlan(){
   wrap.appendChild(tc);
 
   wrap.appendChild(planSection('Meals', meals, 'mwl-meals', 'What’s for dinner?'));
-  wrap.appendChild(planSection('Workouts', workouts, 'mwl-workouts', 'e.g. MAX 20 Day 11', true));
+  wrap.appendChild(planSection('Workouts', workouts, 'mwl-workouts', 'e.g. MAX 20 Day 11', true, gainsTitle));
   wrap.appendChild(planSection('Devotionals', devos, 'mwl-devos', 'e.g. Psalm 23, or a study'));
   wrap.appendChild(renderInsights());
   const clearBtn = document.createElement('button'); clearBtn.className='wbtn';
@@ -3815,6 +4135,304 @@ function renderRogue(){
   wrap.appendChild(foot);
 }
 
+
+/* ================= gains view ================= */
+let gMonthFirst = new Date(now.getFullYear(), now.getMonth(), 1);
+let gSel = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+/* undefined = follow whatever the day is linked to; null = she closed it */
+let gProgOpen;
+
+function gSetSlot(key, slot, field, val){
+  if (!gainsLog[key]) gainsLog[key] = {};
+  const bag = gainsLog[key];
+  if (!bag[slot]) bag[slot] = {};
+  if (val) bag[slot][field] = val; else delete bag[slot][field];
+  if (!bag[slot].w && !bag[slot].r) delete bag[slot];
+  if (!Object.keys(bag).length) delete gainsLog[key];
+  saveGainsLog();
+}
+
+function gExercises(prog, p){
+  const key = gLogKey(p);
+  const bag = gainsLog[key] || {};
+  const wrap = document.createElement('div'); wrap.className='gexwrap';
+  const head = document.createElement('div'); head.className='gexhead';
+  head.innerHTML = '<span>'+prog.name+' &middot; Day '+(p.di+1)+' &middot; Round '+p.r+'</span>'+
+    '<span class="gexcount">'+gLogged(p)+' / '+gLogTotal(prog,p.di)+' logged</span>';
+  wrap.appendChild(head);
+  const total = gLogTotal(prog, p.di), counter = head.querySelector('.gexcount');
+  const bump = ()=>{ counter.textContent = gLogged(p)+' / '+total+' logged'; };
+  gSlots(prog, p.di).forEach((s, si)=>{
+    if (s.head){
+      const hh = document.createElement('div'); hh.className='gexblock';
+      hh.textContent = s.head + (s.unit ? ' · '+s.sets+(s.sets===1?' set · ':' sets · ')+s.unit : '');
+      wrap.appendChild(hh);
+    }
+    const row = document.createElement('div'); row.className='gexrow';
+    const nm = document.createElement('div'); nm.className='gexname'; nm.textContent = s.name;
+    row.appendChild(nm);
+    if (s.unit){
+      const sets = document.createElement('div'); sets.className='gexsets';
+      for (let k=0;k<s.sets;k++){
+        const slot = si+'|'+k, cur = bag[slot] || {};
+        const cell = document.createElement('div'); cell.className='gexset';
+        if (s.unit === G_WR || s.unit === G_W){
+          const wi = document.createElement('input'); wi.type='text'; wi.inputMode='decimal';
+          wi.placeholder='lb'; wi.value = cur.w || '';
+          wi.oninput = ()=>{ gSetSlot(key, slot, 'w', wi.value); bump(); };
+          cell.appendChild(wi);
+        }
+        if (s.unit === G_WR || s.unit === G_R){
+          const ri = document.createElement('input'); ri.type='text'; ri.inputMode='numeric';
+          ri.placeholder='reps'; ri.value = cur.r || '';
+          ri.oninput = ()=>{ gSetSlot(key, slot, 'r', ri.value); bump(); };
+          cell.appendChild(ri);
+        }
+        sets.appendChild(cell);
+      }
+      row.appendChild(sets);
+    }
+    wrap.appendChild(row);
+  });
+  return wrap;
+}
+
+function renderGains(){
+  gSyncFromWeek();
+  const wrap = document.getElementById('gainsView'); wrap.innerHTML='';
+  const today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  /* ---- the month ---- */
+  const cal = document.createElement('section'); cal.className='pcard';
+  const nav = document.createElement('div'); nav.className='gnav';
+  const back = document.createElement('button'); back.innerHTML='&#8249;';
+  back.title='Previous month'; back.setAttribute('aria-label','Previous month');
+  back.onclick = ()=>{ gMonthFirst = new Date(gMonthFirst.getFullYear(), gMonthFirst.getMonth()-1, 1); render(); };
+  const fwd = document.createElement('button'); fwd.innerHTML='&#8250;';
+  fwd.title='Next month'; fwd.setAttribute('aria-label','Next month');
+  fwd.onclick = ()=>{ gMonthFirst = new Date(gMonthFirst.getFullYear(), gMonthFirst.getMonth()+1, 1); render(); };
+  const st = gMonthStats(gMonthFirst);
+  const mid = document.createElement('div'); mid.style.textAlign='center';
+  mid.innerHTML = '<div class="gmo">'+gMonthFirst.toLocaleDateString('en-US',{month:'long',year:'numeric'})+'</div>'+
+    '<div class="gsum">'+st.planned+' planned &middot; '+st.done+' done</div>';
+  nav.appendChild(back); nav.appendChild(mid); nav.appendChild(fwd);
+  cal.appendChild(nav);
+
+  const grid = document.createElement('div'); grid.className='gcal';
+  ['S','M','T','W','T','F','S'].forEach(x=>{
+    const h=document.createElement('div'); h.className='gdow'; h.textContent=x; grid.appendChild(h);
+  });
+  const firstDow = gMonthFirst.getDay();
+  const dim = new Date(gMonthFirst.getFullYear(), gMonthFirst.getMonth()+1, 0).getDate();
+  for (let i=0;i<firstDow;i++){ const p=document.createElement('div'); p.className='gcell pad'; grid.appendChild(p); }
+  for (let dn=1; dn<=dim; dn++){
+    const d = new Date(gMonthFirst.getFullYear(), gMonthFirst.getMonth(), dn);
+    const e = gGet(d), ty = e && gType(e.ty);
+    const b = document.createElement('button'); b.className='gcell';
+    if (d.getTime() === today0.getTime()) b.classList.add('today');
+    if (d.getTime() === gSel.getTime()) b.classList.add('sel');
+    if (ty) b.style.background = ty[2];
+    const n = document.createElement('span'); n.className='gn'; n.textContent = dn;
+    if (ty) n.style.color = ty[1];
+    b.appendChild(n);
+    const mk = document.createElement('span'); mk.className='gtk';
+    mk.innerHTML = (e && e.d) ? '&#10003;' : (e && (e.t || e.ty)) ? '&bull;' : '&nbsp;';
+    if (ty) mk.style.color = ty[1];
+    b.appendChild(mk);
+    if (e && (e.t || e.ty)) b.title = (e.t || e.ty) + (e.d ? ' — done' : '');
+    b.onclick = ()=>{ gSel = d; gProgOpen = undefined; render(); };
+    grid.appendChild(b);
+  }
+  cal.appendChild(grid);
+
+  const leg = document.createElement('div'); leg.className='gleg';
+  GTYPES.forEach(t=>{
+    const c=document.createElement('span'); c.className='gchip';
+    c.textContent=t[0]; c.style.color=t[1]; c.style.background=t[2]; leg.appendChild(c);
+  });
+  cal.appendChild(leg);
+  wrap.appendChild(cal);
+
+  /* ---- the selected day ---- */
+  const e = gGet(gSel) || {t:'',ty:'',n:'',l:[],d:false};
+  if (gProgOpen === undefined) gProgOpen = e.p ? e.p.id : null;
+  const pan = document.createElement('section'); pan.className='pcard';
+  const hd = document.createElement('div'); hd.className='gdayhead';
+  const hl = document.createElement('div');
+  hl.innerHTML = '<span class="gdnum">'+String(gSel.getDate()).padStart(2,'0')+'</span>'+
+    '<span class="gdwk">'+gSel.toLocaleDateString('en-US',{weekday:'long'})+
+    '<small>'+gSel.toLocaleDateString('en-US',{month:'long',year:'numeric'}).toUpperCase()+'</small></span>';
+  const sh = document.createElement('div'); sh.className='gshift';
+  const pd = document.createElement('button'); pd.innerHTML='&#8592;'; pd.setAttribute('aria-label','Previous day');
+  pd.onclick = ()=>{ gSel = new Date(gSel.getFullYear(), gSel.getMonth(), gSel.getDate()-1);
+    gMonthFirst = new Date(gSel.getFullYear(), gSel.getMonth(), 1); gProgOpen = undefined; render(); };
+  const nd = document.createElement('button'); nd.innerHTML='&#8594;'; nd.setAttribute('aria-label','Next day');
+  nd.onclick = ()=>{ gSel = new Date(gSel.getFullYear(), gSel.getMonth(), gSel.getDate()+1);
+    gMonthFirst = new Date(gSel.getFullYear(), gSel.getMonth(), 1); gProgOpen = undefined; render(); };
+  sh.appendChild(pd); sh.appendChild(nd);
+  hd.appendChild(hl); hd.appendChild(sh);
+  pan.appendChild(hd);
+
+  const ti = document.createElement('input'); ti.type='text'; ti.className='gtitle';
+  ti.placeholder = 'Name this workout…'; ti.value = e.t || '';
+  ti.oninput = ()=>{ gEdit(gSel, {t: ti.value}); };
+  pan.appendChild(ti);
+
+  /* program picker */
+  const pw = document.createElement('div'); pw.className='gprogwrap';
+  const pl = document.createElement('div'); pl.className='gplabel'; pl.textContent='Winter Arc workout';
+  pw.appendChild(pl);
+  const chips = document.createElement('div'); chips.className='gchips';
+  WINTER_ARC.forEach(p=>{
+    const b = document.createElement('button'); b.className = 'gpchip' + (gProgOpen===p.id ? ' on' : '');
+    b.textContent = p.name;
+    b.onclick = ()=>{ gProgOpen = gProgOpen===p.id ? null : p.id; render(); };
+    chips.appendChild(b);
+  });
+  pw.appendChild(chips);
+  if (gProgOpen){
+    const prog = gProg(gProgOpen);
+    const linked = (e.p && e.p.id===gProgOpen) ? e.p : null;
+    const days = document.createElement('div'); days.className='gdays';
+    for (let i=0;i<10;i++){
+      const b = document.createElement('button'); b.textContent = i+1;
+      if (linked && linked.di===i) b.className='on';
+      b.onclick = ()=>{
+        const cur = gGet(gSel) || {};
+        gEdit(gSel, { p:{id:prog.id, di:i, r:(linked?linked.r:1)},
+          t: cur.t || (prog.name+' Day '+(i+1)), ty: cur.ty || 'Strength' });
+        render();
+      };
+      days.appendChild(b);
+    }
+    pw.appendChild(days);
+    const rw = document.createElement('div'); rw.className='grounds';
+    [1,2].forEach(rr=>{
+      const b = document.createElement('button'); b.textContent='Round '+rr;
+      if (linked && linked.r===rr) b.className='on';
+      b.disabled = !linked;
+      b.onclick = ()=>{ gEdit(gSel, {p:{id:prog.id, di:linked.di, r:rr}}); render(); };
+      rw.appendChild(b);
+    });
+    if (linked){
+      const u = document.createElement('button'); u.className='gunlink'; u.textContent='Unlink';
+      u.onclick = ()=>{ gEdit(gSel, {p:null}); render(); };
+      rw.appendChild(u);
+    }
+    pw.appendChild(rw);
+    if (linked) pw.appendChild(gExercises(prog, linked));
+    else {
+      const hint = document.createElement('div'); hint.className='exnote';
+      hint.textContent = 'Pick a day to put this workout on '+gSel.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'})+'.';
+      pw.appendChild(hint);
+    }
+  }
+  pan.appendChild(pw);
+
+  /* type */
+  const tl = document.createElement('div'); tl.className='gplabel'; tl.textContent='What kind of day?';
+  pan.appendChild(tl);
+  const types = document.createElement('div'); types.className='gtypes';
+  GTYPES.forEach(t=>{
+    const b = document.createElement('button'); b.textContent = t[0];
+    if (e.ty === t[0]){ b.className='on'; b.style.background=t[1]; b.style.color='#fff'; }
+    else { b.style.background=t[2]; b.style.color=t[1]; }
+    b.onclick = ()=>{ gEdit(gSel, {ty: e.ty===t[0] ? '' : t[0]}); render(); };
+    types.appendChild(b);
+  });
+  pan.appendChild(types);
+
+  /* notes */
+  const nl = document.createElement('div'); nl.className='gplabel'; nl.textContent='The plan';
+  pan.appendChild(nl);
+  const nt = document.createElement('textarea'); nt.className='gnote'; nt.rows=2;
+  nt.placeholder='Sets, reps, distance, pace…'; nt.value = e.n || '';
+  nt.oninput = ()=>{ gEdit(gSel, {n: nt.value}); };
+  pan.appendChild(nt);
+
+  /* links */
+  const ll = document.createElement('div'); ll.className='gplabel'; ll.textContent='Links';
+  pan.appendChild(ll);
+  (e.l || []).forEach((lk, i)=>{
+    const r = document.createElement('div'); r.className='glinkrow';
+    const a = document.createElement('a'); a.href = lk.url || '#'; a.target='_blank'; a.rel='noopener';
+    a.textContent = lk.label || lk.url || 'link';
+    const x = document.createElement('button'); x.innerHTML='&#10005;'; x.title='Remove this link';
+    x.onclick = ()=>{ const l=(e.l||[]).slice(); l.splice(i,1); gEdit(gSel,{l:l}); render(); };
+    r.appendChild(a); r.appendChild(x);
+    pan.appendChild(r);
+  });
+  const addL = document.createElement('button'); addL.className='gaddlink'; addL.textContent='+ Add a link';
+  addL.onclick = ()=>{
+    const url = prompt('Link address:'); if (!url) return;
+    const label = prompt('Call it what?', '') || url;
+    const l = (e.l || []).slice(); l.push({label:label, url:url});
+    gEdit(gSel, {l:l}); render();
+  };
+  pan.appendChild(addL);
+
+  /* actions */
+  const done = document.createElement('button'); done.className = 'gbig' + (e.d ? ' on' : '');
+  done.innerHTML = e.d ? '&#10003; Done' : 'Mark complete';
+  done.onclick = ()=>{ gEdit(gSel, {d: !e.d}); render(); };
+  pan.appendChild(done);
+
+  const acts = document.createElement('div'); acts.className='gacts';
+  const cp = document.createElement('button'); cp.className='wbtn'; cp.textContent='Copy last week';
+  cp.onclick = ()=>{
+    const src = new Date(gSel.getFullYear(), gSel.getMonth(), gSel.getDate()-7);
+    const s = gGet(src);
+    if (!s){ alert('Nothing on '+src.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'})+' to copy.'); return; }
+    gPut(gSel, { t:s.t, ty:s.ty, n:s.n, l:(s.l||[]).slice(), d:false,
+      p: s.p ? {id:s.p.id, di:s.p.di, r:s.p.r} : null });
+    render();
+  };
+  const cl = document.createElement('button'); cl.className='wbtn'; cl.textContent='Clear';
+  cl.onclick = ()=>{
+    if (!confirm('Clear this day? A workout already counted toward your streak stays counted.')) return;
+    gPut(gSel, null); gProgOpen = null; render();
+  };
+  acts.appendChild(cp); acts.appendChild(cl);
+  pan.appendChild(acts);
+  wrap.appendChild(pan);
+
+  /* ---- the whole arc ---- */
+  const arc = document.createElement('section'); arc.className='pcard';
+  arc.innerHTML = '<h3>The whole arc</h3>';
+  WINTER_ARC.forEach(p=>{
+    const s = gArcStats(p.id);
+    const h = document.createElement('div'); h.className='garch';
+    h.innerHTML = '<span>'+p.name+'</span><span class="gsum">'+s.done+' / 20 done &middot; '+s.sched+' scheduled</span>';
+    arc.appendChild(h);
+    const g = document.createElement('div'); g.className='garcgrid';
+    for (let i=0;i<10;i++){
+      const grp = document.createElement('div'); grp.className='garcgrp';
+      const lb = document.createElement('span'); lb.className='garclb'; lb.textContent='D'+(i+1);
+      grp.appendChild(lb);
+      [1,2].forEach(r=>{
+        const c = document.createElement('span'); c.className='garccell'; c.textContent='R'+r;
+        const v = s.seen[i+'|'+r];
+        if (v===2) c.classList.add('done'); else if (v===1) c.classList.add('sched');
+        grp.appendChild(c);
+      });
+      g.appendChild(grp);
+    }
+    arc.appendChild(g);
+  });
+  wrap.appendChild(arc);
+
+  /* ---- import ---- */
+  const imp = document.createElement('button'); imp.className='wbtn';
+  imp.style.width='100%'; imp.style.marginBottom='10px';
+  imp.textContent = 'Import from gainscal';
+  imp.onclick = gImport;
+  wrap.appendChild(imp);
+  const note = document.createElement('div'); note.className='exnote';
+  note.style.textAlign='center';
+  note.textContent = 'Marking a day done counts toward your workout streak. Leave a day blank on the Plan tab and the Week tab pulls the workout from here.';
+  wrap.appendChild(note);
+}
+
 /* ================= top level ================= */
 function render(){
   snapshotToday();
@@ -3823,6 +4441,7 @@ function render(){
   document.getElementById('tabPlan').className = view==='plan'?'on':'';
   document.getElementById('tabAll').className = view==='all'?'on':'';
   document.getElementById('tabProg').className = view==='prog'?'on':'';
+  document.getElementById('tabGains').className = view==='gains'?'on':'';
   document.getElementById('tabFood').className = view==='food'?'on':'';
   document.getElementById('tabWork').className = view==='work'?'on':'';
   document.getElementById('tabRogue').className = view==='rogue'?'on':'';
@@ -3830,16 +4449,18 @@ function render(){
   document.getElementById('planView').style.display = view==='plan'?'':'none';
   document.getElementById('allView').style.display = view==='all'?'':'none';
   document.getElementById('progView').style.display = view==='prog'?'':'none';
+  document.getElementById('gainsView').style.display = view==='gains'?'':'none';
   document.getElementById('foodView').style.display = view==='food'?'':'none';
   document.getElementById('workView').style.display = view==='work'?'':'none';
   document.getElementById('rogueView').style.display = view==='rogue'?'':'none';
   if (view==='week') renderWeek(); else if (view==='plan') renderPlan();
   else if (view==='all') renderAll(); else if (view==='prog') renderProgress();
   else if (view==='food') renderFood(); else if (view==='rogue') renderRogue();
+  else if (view==='gains') renderGains();
   else renderWork();
 
   if (view !== lastRenderedView){
-    const map = { week:'weekView', plan:'planView', all:'allView', prog:'progView', food:'foodView', work:'workView', rogue:'rogueView' };
+    const map = { week:'weekView', plan:'planView', all:'allView', prog:'progView', food:'foodView', work:'workView', rogue:'rogueView', gains:'gainsView' };
     const el = document.getElementById(map[view]);
     if (el){ el.classList.remove('viewin'); void el.offsetWidth; el.classList.add('viewin'); }
     lastRenderedView = view;
@@ -3865,6 +4486,13 @@ function render(){
     title='Look at You Go';
     sub='Your momentum, receipts and all';
     big=(cur?'🔥 ':'')+cur+'-day workout streak'; small='longest '+best+' · '+weeksTracked()+' weeks strong';
+  } else if (view==='gains'){
+    const g=gMonthStats(gMonthFirst); pct=g.planned?100*g.done/g.planned:0;
+    const cur=currentStreak('workout');
+    title='Winter Arc';
+    sub='Plan the month, log the work';
+    big=g.done+' of '+g.planned+' done';
+    small=gMonthFirst.toLocaleDateString('en-US',{month:'long',year:'numeric'})+(cur?' · '+cur+'-day streak':'');
   } else if (view==='food'){
     const log=foodLog(foodDay);
     const cal=log.reduce((s,e)=>s+(+e.c||0),0), pro=log.reduce((s,e)=>s+(+e.p||0),0);
@@ -3978,6 +4606,7 @@ document.getElementById('tabWeek').onclick = ()=>{ view='week'; localStorage.set
 document.getElementById('tabPlan').onclick = ()=>{ view='plan'; localStorage.setItem('mwl-view','plan'); render(); };
 document.getElementById('tabAll').onclick = ()=>{ view='all'; localStorage.setItem('mwl-view','all'); render(); };
 document.getElementById('tabProg').onclick = ()=>{ view='prog'; localStorage.setItem('mwl-view','prog'); render(); };
+document.getElementById('tabGains').onclick = ()=>{ view='gains'; localStorage.setItem('mwl-view','gains'); render(); };
 document.getElementById('tabFood').onclick = ()=>{ view='food'; localStorage.setItem('mwl-view','food'); render(); };
 document.getElementById('tabWork').onclick = ()=>{ view='work'; localStorage.setItem('mwl-view','work'); render(); };
 document.getElementById('tabRogue').onclick = ()=>{ view='rogue'; localStorage.setItem('mwl-view','rogue'); render(); };
